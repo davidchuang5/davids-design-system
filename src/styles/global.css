@@ -1,0 +1,7 @@
+body {
+  font-family: var(--ds-font-family-sans);
+  color: var(--ds-semantic-color-text-default);
+  background-color: var(--ds-semantic-color-bg-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

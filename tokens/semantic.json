@@ -1,0 +1,40 @@
+{
+  "semantic": {
+    "color": {
+      "bg": {
+        "default":  { "value": "{color.neutral.0}" },
+        "subtle":   { "value": "{color.neutral.50}" },
+        "muted":    { "value": "{color.neutral.100}" },
+        "emphasis": { "value": "{color.brand.600}" }
+      },
+      "text": {
+        "default":  { "value": "{color.neutral.900}" },
+        "subtle":   { "value": "{color.neutral.600}" },
+        "disabled": { "value": "{color.neutral.400}" },
+        "inverse":  { "value": "{color.neutral.0}" },
+        "brand":    { "value": "{color.brand.600}" }
+      },
+      "border": {
+        "default":  { "value": "{color.neutral.200}" },
+        "strong":   { "value": "{color.neutral.400}" },
+        "brand":    { "value": "{color.brand.500}" },
+        "danger":   { "value": "{color.danger.500}" }
+      },
+      "action": {
+        "primary":        { "value": "{color.brand.600}" },
+        "primaryHover":   { "value": "{color.brand.700}" },
+        "primaryActive":  { "value": "{color.brand.800}" },
+        "danger":         { "value": "{color.danger.500}" },
+        "dangerHover":    { "value": "{color.danger.700}" }
+      },
+      "feedback": {
+        "success": { "value": "{color.success.700}" },
+        "warning": { "value": "{color.warning.700}" },
+        "danger":  { "value": "{color.danger.700}" }
+      }
+    },
+    "focus": {
+      "ring": { "value": "0 0 0 3px rgba(59,130,246,0.45)" }
+    }
+  }
+}
