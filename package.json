@@ -20,7 +20,7 @@
   },
   "files": ["dist"],
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "storybook dev -p 6006",
     "build": "tsc && vite build",
     "build:tokens": "node scripts/build-tokens.js",
     "storybook": "storybook dev -p 6006",
