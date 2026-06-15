@@ -2,3 +2,8 @@ node_modules
 dist
 storybook-static
 .DS_Store
+
+# ds-agent
+ds-agent/node_modules
+ds-agent/run-log.json
+generated/
