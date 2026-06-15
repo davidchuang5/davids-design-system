@@ -3,15 +3,13 @@
   align-items: center;
   justify-content: center;
   gap: var(--ds-spacing-2);
-  border: 1px solid transparent;
+  border: none;
   border-radius: var(--ds-border-radius-md);
   font-family: inherit;
   font-weight: var(--ds-font-weight-medium);
   line-height: var(--ds-line-height-tight);
   cursor: pointer;
-  transition:
-    background-color var(--ds-duration-fast) var(--ds-easing-default),
-    border-color var(--ds-duration-fast) var(--ds-easing-default),
+  transition: background-color var(--ds-duration-fast) var(--ds-easing-default),
     color var(--ds-duration-fast) var(--ds-easing-default),
     box-shadow var(--ds-duration-fast) var(--ds-easing-default);
   white-space: nowrap;
@@ -20,7 +18,7 @@
 
 .ds-button:focus-visible {
   outline: none;
-  box-shadow: var(--ds-semantic-focus-ring);
+  box-shadow: 0 0 0 3px rgba(109, 103, 101, 0.45);
 }
 
 .ds-button:disabled {
@@ -51,63 +49,55 @@
 /* --- Variants --- */
 
 .ds-button.primary {
-  background-color: var(--ds-semantic-color-action-primary);
-  color: var(--ds-semantic-color-text-inverse);
-  border-color: var(--ds-semantic-color-action-primary);
+  background-color: var(--ds-color-neutral-50);
+  color: var(--ds-color-neutral-900);
 }
 
 .ds-button.primary:hover:not(:disabled) {
-  background-color: var(--ds-semantic-color-action-primary-hover);
-  border-color: var(--ds-semantic-color-action-primary-hover);
+  background-color: var(--ds-color-neutral-100);
 }
 
 .ds-button.primary:active:not(:disabled) {
-  background-color: var(--ds-semantic-color-action-primary-active);
-  border-color: var(--ds-semantic-color-action-primary-active);
+  background-color: var(--ds-color-neutral-200);
 }
 
 .ds-button.secondary {
-  background-color: var(--ds-semantic-color-bg-default);
-  color: var(--ds-semantic-color-text-default);
-  border-color: var(--ds-semantic-color-border-default);
+  background-color: var(--ds-color-neutral-0);
+  color: var(--ds-color-neutral-900);
 }
 
 .ds-button.secondary:hover:not(:disabled) {
-  background-color: var(--ds-semantic-color-bg-subtle);
-  border-color: var(--ds-semantic-color-border-strong);
+  background-color: var(--ds-color-neutral-50);
 }
 
 .ds-button.secondary:active:not(:disabled) {
-  background-color: var(--ds-semantic-color-bg-muted);
+  background-color: var(--ds-color-neutral-100);
 }
 
 .ds-button.ghost {
   background-color: transparent;
-  color: var(--ds-semantic-color-text-default);
-  border-color: transparent;
+  color: var(--ds-color-neutral-900);
 }
 
 .ds-button.ghost:hover:not(:disabled) {
-  background-color: var(--ds-semantic-color-bg-subtle);
+  background-color: var(--ds-color-neutral-50);
 }
 
 .ds-button.ghost:active:not(:disabled) {
-  background-color: var(--ds-semantic-color-bg-muted);
+  background-color: var(--ds-color-neutral-100);
 }
 
 .ds-button.danger {
-  background-color: var(--ds-semantic-color-action-danger);
-  color: var(--ds-semantic-color-text-inverse);
-  border-color: var(--ds-semantic-color-action-danger);
+  background-color: var(--ds-color-neutral-50);
+  color: var(--ds-color-neutral-900);
 }
 
 .ds-button.danger:hover:not(:disabled) {
-  background-color: var(--ds-semantic-color-action-danger-hover);
-  border-color: var(--ds-semantic-color-action-danger-hover);
+  background-color: var(--ds-color-neutral-100);
 }
 
 .ds-button.danger:active:not(:disabled) {
-  background-color: var(--ds-semantic-color-action-danger-hover);
+  background-color: var(--ds-color-neutral-200);
 }
 
 /* --- Loading --- */
@@ -127,5 +117,7 @@
 }
 
 @keyframes ds-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

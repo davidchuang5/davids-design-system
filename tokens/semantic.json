@@ -5,36 +5,36 @@
         "default":  { "value": "{color.neutral.0}" },
         "subtle":   { "value": "{color.neutral.50}" },
         "muted":    { "value": "{color.neutral.100}" },
-        "emphasis": { "value": "{color.brand.600}" }
+        "emphasis": { "value": "{color.brand.500}" }
       },
       "text": {
         "default":  { "value": "{color.neutral.900}" },
-        "subtle":   { "value": "{color.neutral.600}" },
+        "subtle":   { "value": "{color.neutral.500}" },
         "disabled": { "value": "{color.neutral.400}" },
         "inverse":  { "value": "{color.neutral.0}" },
-        "brand":    { "value": "{color.brand.600}" }
+        "brand":    { "value": "{color.brand.500}" }
       },
       "border": {
         "default":  { "value": "{color.neutral.200}" },
         "strong":   { "value": "{color.neutral.400}" },
-        "brand":    { "value": "{color.brand.500}" },
-        "danger":   { "value": "{color.danger.500}" }
+        "brand":    { "value": "{color.brand.400}" },
+        "danger":   { "value": "{color.danger.50}" }
       },
       "action": {
-        "primary":        { "value": "{color.brand.600}" },
+        "primary":        { "value": "{color.brand.500}" },
         "primaryHover":   { "value": "{color.brand.700}" },
-        "primaryActive":  { "value": "{color.brand.800}" },
-        "danger":         { "value": "{color.danger.500}" },
-        "dangerHover":    { "value": "{color.danger.700}" }
+        "primaryActive":  { "value": "{color.brand.900}" },
+        "danger":         { "value": "{color.danger.50}" },
+        "dangerHover":    { "value": "{color.danger.100}" }
       },
       "feedback": {
-        "success": { "value": "{color.success.700}" },
-        "warning": { "value": "{color.warning.700}" },
-        "danger":  { "value": "{color.danger.700}" }
+        "success": { "value": "{color.success.50}" },
+        "warning": { "value": "{color.warning.50}" },
+        "danger":  { "value": "{color.danger.50}" }
       }
     },
     "focus": {
-      "ring": { "value": "0 0 0 3px rgba(59,130,246,0.45)" }
+      "ring": { "value": "0 0 0 3px rgba(144, 92, 67, 0.45)" }
     }
   }
 }

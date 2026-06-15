@@ -1,6 +1,6 @@
 /**
  * Do not edit directly
- * Generated on Sat, 13 Jun 2026 17:32:31 GMT
+ * Generated on Mon, 15 Jun 2026 02:25:54 GMT
  */
 
 export const FontFamilySans : string;
@@ -8,30 +8,53 @@ export const FontFamilyMono : string;
 export const ColorBrand50 : string;
 export const ColorBrand100 : string;
 export const ColorBrand200 : string;
-export const ColorBrand300 : string;
 export const ColorBrand400 : string;
 export const ColorBrand500 : string;
-export const ColorBrand600 : string;
 export const ColorBrand700 : string;
-export const ColorBrand800 : string;
 export const ColorBrand900 : string;
 export const ColorNeutral0 : string;
 export const ColorNeutral50 : string;
 export const ColorNeutral100 : string;
 export const ColorNeutral200 : string;
-export const ColorNeutral300 : string;
 export const ColorNeutral400 : string;
 export const ColorNeutral500 : string;
-export const ColorNeutral600 : string;
 export const ColorNeutral700 : string;
-export const ColorNeutral800 : string;
 export const ColorNeutral900 : string;
+export const ColorSlate50 : string;
+export const ColorSlate100 : string;
+export const ColorSlate200 : string;
+export const ColorSlate400 : string;
+export const ColorSlate500 : string;
+export const ColorSlate700 : string;
+export const ColorSlate900 : string;
+export const ColorSand50 : string;
+export const ColorSand100 : string;
+export const ColorSand200 : string;
+export const ColorSand400 : string;
+export const ColorSand500 : string;
+export const ColorSand700 : string;
+export const ColorSand900 : string;
+export const ColorSuccess50 : string;
+export const ColorSuccess100 : string;
+export const ColorSuccess200 : string;
+export const ColorSuccess400 : string;
 export const ColorSuccess500 : string;
 export const ColorSuccess700 : string;
+export const ColorSuccess900 : string;
+export const ColorWarning50 : string;
+export const ColorWarning100 : string;
+export const ColorWarning200 : string;
+export const ColorWarning400 : string;
 export const ColorWarning500 : string;
 export const ColorWarning700 : string;
+export const ColorWarning900 : string;
+export const ColorDanger50 : string;
+export const ColorDanger100 : string;
+export const ColorDanger200 : string;
+export const ColorDanger400 : string;
 export const ColorDanger500 : string;
 export const ColorDanger700 : string;
+export const ColorDanger900 : string;
 export const Spacing0 : string;
 export const Spacing1 : string;
 export const Spacing2 : string;
