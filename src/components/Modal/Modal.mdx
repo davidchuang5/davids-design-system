@@ -1,0 +1,151 @@
+import { Modal } from './Modal'
+import { useState } from 'react'
+
+# Modal
+
+## Overview
+
+The Modal component displays content in a dialog box that overlays the main page, pausing user interaction with the underlying content until the modal is dismissed. Use it for critical actions that require user confirmation, forms that demand focused attention, or alerts that need explicit acknowledgment.
+
+## Usage
+
+```jsx
+function BasicModal() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Open Modal</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Confirm Action"
+      >
+        Are you sure you want to proceed?
+      </Modal>
+    </>
+  )
+}
+```
+
+### With Footer Actions
+
+```jsx
+function ModalWithFooter() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Delete Item</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Delete Confirmation"
+        footer={
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            <button onClick={() => setOpen(false)}>Cancel</button>
+            <button onClick={() => setOpen(false)}>Delete</button>
+          </div>
+        }
+      >
+        This action cannot be undone.
+      </Modal>
+    </>
+  )
+}
+```
+
+### Non-Dismissible Modal
+
+```jsx
+function NonDismissibleModal() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Open Modal</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Processing"
+        closeOnEscape={false}
+        closeOnOverlayClick={false}
+      >
+        Please wait while we process your request...
+      </Modal>
+    </>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controls whether the modal is visible. |
+| `onClose` | `() => void` | — | Callback fired when the modal should close (user presses Escape, clicks overlay, or clicks close button). |
+| `title` | `string \| React.ReactNode` | `undefined` | Title displayed in the modal header. If omitted, no header is rendered. |
+| `children` | `React.ReactNode` | `undefined` | Main content of the modal. |
+| `footer` | `React.ReactNode` | `undefined` | Content displayed in the footer section, typically action buttons. |
+| `closeOnEscape` | `boolean` | `true` | Whether pressing the Escape key closes the modal. |
+| `closeOnOverlayClick` | `boolean` | `true` | Whether clicking the overlay backdrop closes the modal. |
+
+## Accessibility
+
+- **Native Dialog**: The component uses the HTML `<dialog>` element for proper semantic structure and built-in accessibility features.
+- **Escape Key**: When `closeOnEscape` is true, users can press Escape to dismiss the modal, following standard UI patterns.
+- **Focus Management**: The dialog element automatically manages focus when opened and restores focus when closed.
+- **Close Button**: The close button includes `aria-label="Close modal"` for screen reader users.
+- **Icon Decoration**: The close icon uses `aria-hidden="true"` to prevent redundant announcements from assistive technologies.
+
+## Do's and Don'ts
+
+### Do
+
+```jsx
+// Use modals for critical confirmations or focused tasks
+function DeleteConfirmation() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Delete Account</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Delete Your Account?"
+        footer={
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setOpen(false)}>Cancel</button>
+            <button onClick={() => setOpen(false)}>Permanently Delete</button>
+          </div>
+        }
+      >
+        This action cannot be reversed. All data will be lost.
+      </Modal>
+    </>
+  )
+}
+```
+
+### Don't
+
+```jsx
+// Avoid using modals for routine information or non-critical messages
+function BadModal() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Show Info</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Welcome"
+      >
+        Thanks for visiting our site!
+      </Modal>
+    </>
+  )
+}
+```

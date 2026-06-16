@@ -22,7 +22,6 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "tsc && vite build",
-    "build:tokens": "node scripts/build-tokens.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
@@ -59,7 +58,6 @@
     "react-dom": "^18.2.0",
     "sass": "^1.72.0",
     "storybook": "^7.6.17",
-    "style-dictionary": "^3.9.2",
     "typescript": "^5.4.2",
     "vite": "^5.2.2",
     "vite-plugin-dts": "^3.7.3",

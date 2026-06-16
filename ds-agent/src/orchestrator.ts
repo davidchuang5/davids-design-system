@@ -1,119 +1,228 @@
-import { fileURLToPath } from 'url'
-import { dirname, resolve, join } from 'path'
-import { writeFile } from './utils/fs.js'
-import { confirm } from './utils/confirm.js'
-import { runTokenAgent } from './agents/token-agent.js'
-import { runComponentAgent } from './agents/component-agent.js'
-import { runTestAgent } from './agents/test-agent.js'
-import { runDocsAgent } from './agents/docs-agent.js'
-import type { DesignSystemSpec, ComponentOutput } from './types.js'
+// src/orchestrator.ts
+import 'dotenv/config';
+import { query } from '@anthropic-ai/claude-agent-sdk';
+import { agentDefinitions } from './agents/definitions.js';
+import type { DesignSystemSpec } from './types.js';
+import { TOKEN_AGENT_PROMPT } from './agents/prompts.js';
+import * as readline from 'readline';
+import * as fs from 'fs/promises';
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const PROJECT_ROOT = resolve(__dirname, '../../')
+const SRC_DIR = '/Users/davidchuang/enterprise-design-system/src';
 
-export async function orchestrate(spec: DesignSystemSpec): Promise<void> {
-  const outDir = join(PROJECT_ROOT, 'generated', spec.name)
-  console.log(`\nOutput directory: ${outDir}\n`)
+// ── Utility: human-in-the-loop confirmation prompt ──────────
+async function confirm(question: string): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question(`\n${question} (y/n): `, (answer) => {
+      rl.close();
+      resolve(answer.toLowerCase() === 'y');
+    });
+  });
+}
 
-  // ── Phase 1: Design Tokens ───────────────────────────────────────
-  console.log('── Phase 1: Design Tokens ──')
-  const tokens = await runTokenAgent(spec)
+// ── Utility: collect text from an assistant message ─────────
+function extractText(message: any): string {
+  return (
+    message.message?.content
+      ?.filter((b: any) => b.type === 'text')
+      .map((b: any) => b.text)
+      .join('') ?? ''
+  );
+}
 
-  await writeFile(join(outDir, 'src/tokens/variables.css'), tokens.cssVariables)
-  await writeFile(
-    join(outDir, 'src/tokens/tokens.json'),
-    JSON.stringify(tokens.colors, null, 2),
-  )
+// ── Main orchestrator ────────────────────────────────────────
+export async function orchestrate(spec: DesignSystemSpec) {
+  console.log(`\n🎨  Design System Pipeline — ${spec.name}`);
+  console.log(`    Components : ${spec.components.join(', ')}`);
+  console.log(`    Palette    : ${spec.colorPalette}`);
+  console.log(`    Radius     : ${spec.borderRadius}`);
+  console.log(`    Output     : ${SRC_DIR}\n`);
 
-  console.log('\nGenerated token CSS variables:\n')
-  console.log(tokens.cssVariables.slice(0, 800) + (tokens.cssVariables.length > 800 ? '\n  ...(truncated)' : ''))
+  const runLog: Array<{
+    phase: string;
+    type: string;
+    content: string;
+    timestamp: string;
+  }> = [];
 
-  const proceed = await confirm('\nContinue with component generation?')
-  if (!proceed) {
-    console.log('Aborted after token phase. Inspect generated/tokens/ and rerun when ready.')
-    process.exit(0)
+  function log(phase: string, message: any) {
+    runLog.push({
+      phase,
+      type: message.type,
+      content: JSON.stringify(message).slice(0, 500),
+      timestamp: new Date().toISOString(),
+    });
   }
 
-  // ── Phase 2: Components (parallel) ──────────────────────────────
-  console.log('\n── Phase 2: Components ──')
-  const componentResults = await Promise.allSettled(
-    spec.components.map(name => runComponentAgent(name, spec, tokens)),
-  )
+  // ── PHASE 1: Tokens (isolated run for human review) ────────
+  console.log('── Phase 1: Design Tokens ──\n');
 
-  const components: ComponentOutput[] = componentResults
-    .map((result, i) => {
-      if (result.status === 'fulfilled') return result.value
-      console.error(`[ComponentAgent] Failed for ${spec.components[i]}:`, result.reason)
-      return null
-    })
-    .filter((c): c is ComponentOutput => c !== null)
+  const tokensExist = await Promise.all([
+    fs.access(`${SRC_DIR}/tokens/variables.css`).then(() => true).catch(() => false),
+    fs.access(`${SRC_DIR}/tokens/tokens.json`).then(() => true).catch(() => false),
+  ]).then(([a, b]) => a && b);
 
-  await Promise.all(
-    components.map(async component => {
-      const dir = join(outDir, 'src/components', component.name)
-      await writeFile(join(dir, `${component.name}.tsx`), component.code)
-      await writeFile(join(dir, `${component.name}.css`), component.cssContent)
-      await writeFile(join(dir, 'index.ts'), `export * from './${component.name}'\n`)
-    }),
-  )
+  if (tokensExist) {
+    console.log(`  ✓ Tokens already exist at ${SRC_DIR}/tokens/ — skipping generation.\n`);
+  } else {
+    for await (const message of query({
+      prompt: `
+        Generate design tokens for the following spec and write them to disk.
+        Do not generate any components yet — tokens only.
 
-  // ── Phase 3: Tests & Stories (parallel) ─────────────────────────
-  console.log('\n── Phase 3: Tests & Stories ──')
-  await Promise.allSettled(
-    components.map(async component => {
-      try {
-        const tests = await runTestAgent(component)
-        const dir = join(outDir, 'src/components', component.name)
-        await writeFile(join(dir, `${component.name}.stories.tsx`), tests.storyCode)
-        await writeFile(join(dir, `${component.name}.test.tsx`), tests.testCode)
-      } catch (err) {
-        console.error(`[TestAgent] Failed for ${component.name}:`, err)
+        Spec:
+        - Name: ${spec.name}
+        - Color palette: ${spec.colorPalette}
+        - Border radius style: ${spec.borderRadius}
+
+        Write the CSS custom properties to: ${SRC_DIR}/tokens/variables.css
+        Write the raw token values to: ${SRC_DIR}/tokens/tokens.json
+      `,
+      options: {
+        model: 'claude-sonnet-4-6',
+        systemPrompt: TOKEN_AGENT_PROMPT,
+        allowedTools: ['Write', 'Read'],
+        permissionMode: 'bypassPermissions',
+        allowDangerouslySkipPermissions: true,
+        cwd: process.cwd(),
+      },
+    })) {
+      log('phase-1-tokens', message);
+
+      if (message.type === 'assistant') {
+        const text = extractText(message);
+        if (text) process.stdout.write(text);
       }
-    }),
-  )
+    }
+  }
 
-  // ── Phase 4: Documentation (parallel) ───────────────────────────
-  console.log('\n── Phase 4: Documentation ──')
-  await Promise.allSettled(
-    components.map(async component => {
-      try {
-        const docs = await runDocsAgent(component, tokens)
-        await writeFile(join(outDir, 'docs', `${component.name}.mdx`), docs.mdx)
-      } catch (err) {
-        console.error(`[DocsAgent] Failed for ${component.name}:`, err)
-      }
-    }),
-  )
+  // ── Checkpoint: inspect tokens before proceeding ────────────
+  const proceed = await confirm(
+    `Tokens at ${SRC_DIR}/tokens/\nConfirm to proceed with component generation`
+  );
 
-  // ── Phase 5: Package scaffolding ────────────────────────────────
-  console.log('\n── Phase 5: Package Scaffolding ──')
-  await writeFile(join(outDir, 'src/index.ts'), generateBarrelExport(components))
-  await writeFile(join(outDir, 'package.json'), generatePackageJson(spec))
+  if (!proceed) {
+    console.log('\n⏸  Pipeline paused. Edit token files and re-run to continue.\n');
+    await fs.writeFile('./run-log.json', JSON.stringify(runLog, null, 2));
+    process.exit(0);
+  }
 
-  const succeeded = components.length
-  const attempted = spec.components.length
-  console.log(`\n✓ Done — ${succeeded}/${attempted} components generated at ${outDir}`)
-  console.log('  Inspect the output, then copy components into src/components/ to integrate.\n')
-}
+  // ── PHASES 2–3: Components, Tests & Docs ────────────────────
+  console.log('\n── Phases 2–3: Components → Tests & Docs ──\n');
 
-function generateBarrelExport(components: ComponentOutput[]): string {
-  const exports = components.map(c => `export * from './components/${c.name}'`).join('\n')
-  return `${exports}\n`
-}
+  const orchestratorPrompt = `
+You are orchestrating the creation of React components for an existing design system.
 
-function generatePackageJson(spec: DesignSystemSpec): string {
-  return JSON.stringify(
-    {
-      name: `@ds/${spec.name.toLowerCase()}`,
-      version: '0.1.0',
-      description: spec.description,
-      type: 'module',
-      main: './dist/index.cjs',
-      module: './dist/index.js',
-      types: './dist/index.d.ts',
-      peerDependencies: { react: '>=17', 'react-dom': '>=17' },
+Spec:
+- Name: ${spec.name}
+- Components: ${spec.components.join(', ')}
+- Color palette: ${spec.colorPalette}
+- Border radius style: ${spec.borderRadius}
+- Source directory: ${SRC_DIR}
+- Token variables are already written at: ${SRC_DIR}/tokens/variables.css
+
+Execute the following phases in order. Use the Task tool to delegate to subagents.
+
+───────────────────────────────────────────
+PHASE 2 — Components
+───────────────────────────────────────────
+Invoke "component-agent" in parallel (one Task per component) for each of:
+${spec.components.map((c) => `- ${c}`).join('\n')}
+
+Pass each subagent:
+- The component name to build
+- The tokens path: ${SRC_DIR}/tokens/variables.css
+- The output path: ${SRC_DIR}/components/[ComponentName]/
+
+Wait for all component tasks to complete before proceeding.
+Report which components succeeded and which (if any) failed.
+
+───────────────────────────────────────────
+PHASE 3 — Tests & Documentation
+───────────────────────────────────────────
+For each successfully generated component, invoke in parallel:
+- "test-agent"  → Storybook stories + Vitest unit tests
+- "docs-agent"  → MDX documentation
+
+Pass each subagent the component name and its directory path.
+Tests and docs for different components can all run simultaneously.
+
+Wait for all tasks to complete. Report results.
+
+───────────────────────────────────────────
+ERROR HANDLING
+───────────────────────────────────────────
+- If any subagent fails, log the error and continue with remaining work
+- Do not retry failed subagents — report them clearly at the end
+- After all phases, print a final summary: succeeded components and failed components
+`;
+
+  for await (const message of query({
+    prompt: orchestratorPrompt,
+    options: {
+      model: 'claude-opus-4-7',
+      permissionMode: 'bypassPermissions',
+      allowDangerouslySkipPermissions: true,
+      maxTurns: 100,
+      cwd: process.cwd(),
+      agents: agentDefinitions,
     },
-    null,
-    2,
+  })) {
+    log('phase-2-3-orchestrator', message);
+
+    if (message.type === 'assistant') {
+      const text = extractText(message);
+      if (text) process.stdout.write(text);
+    }
+
+    if (message.type === 'system' && message.subtype === 'task_started') {
+      console.log(`\n  ↳ [${message.subagent_type ?? 'subagent'}] ${message.description}`);
+    }
+    if (
+      message.type === 'system' &&
+      message.subtype === 'task_updated' &&
+      message.patch.status === 'completed'
+    ) {
+      console.log(`  ↳ finished\n`);
+    }
+  }
+
+  // ── Update barrel export ─────────────────────────────────────
+  console.log('\n── Updating src/index.ts ──');
+  const indexPath = `${SRC_DIR}/index.ts`;
+  const existingIndex = await fs.readFile(indexPath, 'utf-8');
+
+  const newExports = (
+    await Promise.all(
+      spec.components.map(async (name) => {
+        if (existingIndex.includes(`./components/${name}`)) return null;
+        try {
+          await fs.access(`${SRC_DIR}/components/${name}`);
+          return `export * from './components/${name}';`;
+        } catch {
+          return null;
+        }
+      }),
+    )
   )
+    .filter(Boolean)
+    .join('\n');
+
+  if (newExports) {
+    await fs.writeFile(indexPath, `${existingIndex.trimEnd()}\n${newExports}\n`);
+    console.log(`Added exports for: ${spec.components.join(', ')}\n`);
+  } else {
+    console.log('No new exports to add.\n');
+  }
+
+  // ── Write run log ────────────────────────────────────────────
+  const logPath = './run-log.json';
+  await fs.writeFile(logPath, JSON.stringify(runLog, null, 2));
+
+  console.log(`✓  Pipeline complete`);
+  console.log(`✓  Components → ${SRC_DIR}/components/`);
+  console.log(`✓  Run log   → ${logPath}\n`);
 }

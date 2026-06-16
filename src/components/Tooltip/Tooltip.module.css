@@ -1,0 +1,109 @@
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipTrigger {
+  display: inline-block;
+  outline: none;
+}
+
+.tooltipContent {
+  position: absolute;
+  z-index: var(--ds-z-index-tooltip);
+  background-color: var(--ds-color-primary-800);
+  color: var(--ds-color-primary-800-foreground);
+  padding: var(--ds-spacing-2) var(--ds-spacing-3);
+  border-radius: var(--ds-border-radius-md);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  white-space: nowrap;
+  box-shadow: var(--ds-shadow-lg);
+  animation: tooltipFadeIn var(--ds-duration-fast) var(--ds-easing-ease-out);
+  pointer-events: none;
+  max-width: 280px;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.tooltipArrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  background-color: var(--ds-color-primary-800);
+}
+
+/* Placement: top */
+.placement-top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: var(--ds-spacing-2);
+}
+
+.placement-top .tooltipArrow {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: var(--ds-spacing-1) var(--ds-spacing-1) 0 var(--ds-spacing-1);
+  border-color: var(--ds-color-primary-800) transparent transparent transparent;
+}
+
+/* Placement: bottom */
+.placement-bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--ds-spacing-2);
+}
+
+.placement-bottom .tooltipArrow {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 var(--ds-spacing-1) var(--ds-spacing-1) var(--ds-spacing-1);
+  border-color: transparent transparent var(--ds-color-primary-800) transparent;
+}
+
+/* Placement: left */
+.placement-left {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: var(--ds-spacing-2);
+}
+
+.placement-left .tooltipArrow {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: var(--ds-spacing-1) 0 var(--ds-spacing-1) var(--ds-spacing-1);
+  border-color: transparent transparent transparent var(--ds-color-primary-800);
+}
+
+/* Placement: right */
+.placement-right {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: var(--ds-spacing-2);
+}
+
+.placement-right .tooltipArrow {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: var(--ds-spacing-1) var(--ds-spacing-1) var(--ds-spacing-1) 0;
+  border-color: transparent var(--ds-color-primary-800) transparent transparent;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

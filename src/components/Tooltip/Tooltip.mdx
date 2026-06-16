@@ -1,0 +1,129 @@
+# Tooltip
+
+## Overview
+
+Tooltips provide concise, contextual information about a UI element when a user hovers over it or focuses on it. Use tooltips to explain functionality, clarify icons, or provide additional details without cluttering the interface. Keep content short and avoid repeating visible text.
+
+## Usage
+
+### Basic Tooltip
+
+```jsx
+import { Tooltip } from '@puma-ui/Tooltip'
+
+export default function TooltipExample() {
+  return (
+    <Tooltip content="Save your work">
+      <button>Save</button>
+    </Tooltip>
+  )
+}
+```
+
+### Placement Variants
+
+```jsx
+import { Tooltip } from '@puma-ui/Tooltip'
+
+export default function TooltipPlacements() {
+  return (
+    <div style={{ display: 'flex', gap: '2rem', padding: '4rem' }}>
+      <Tooltip content="Tooltip on top" placement="top">
+        <button>Top</button>
+      </Tooltip>
+
+      <Tooltip content="Tooltip on right" placement="right">
+        <button>Right</button>
+      </Tooltip>
+
+      <Tooltip content="Tooltip on bottom" placement="bottom">
+        <button>Bottom</button>
+      </Tooltip>
+
+      <Tooltip content="Tooltip on left" placement="left">
+        <button>Left</button>
+      </Tooltip>
+    </div>
+  )
+}
+```
+
+### Controlled Open State
+
+```jsx
+import { Tooltip } from '@puma-ui/Tooltip'
+import { useState } from 'react'
+
+export default function ControlledTooltip() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div>
+      <Tooltip
+        content="Click the button to toggle"
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+      >
+        <button onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? 'Hide' : 'Show'} Tooltip
+        </button>
+      </Tooltip>
+    </div>
+  )
+}
+```
+
+### With Delay
+
+```jsx
+import { Tooltip } from '@puma-ui/Tooltip'
+
+export default function TooltipWithDelay() {
+  return (
+    <Tooltip content="Appears after 300ms" showDelay={300}>
+      <button>Hover me</button>
+    </Tooltip>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `content` | `React.ReactNode` | — | The text or element displayed in the tooltip. |
+| `placement` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Position of the tooltip relative to the trigger element. |
+| `isOpen` | `boolean` | — | Controls whether the tooltip is visible. Omit for uncontrolled behavior. |
+| `onOpenChange` | `(isOpen: boolean) => void` | — | Callback fired when the tooltip open state changes. |
+| `showDelay` | `number` | `0` | Delay in milliseconds before showing the tooltip on hover. |
+| `hideDelay` | `number` | `0` | Delay in milliseconds before hiding the tooltip on mouse leave. |
+| `children` | `React.ReactNode` | — | The trigger element that displays the tooltip on hover. |
+
+## Accessibility
+
+The Tooltip component follows WAI-ARIA practices to ensure accessibility:
+
+- **Role and Attributes**: The tooltip content has `role="tooltip"` and `aria-hidden="false"` when visible. The trigger element has `role="button"` and `aria-describedby="tooltip-content"` when the tooltip is open.
+- **Keyboard Support**: Press `Escape` to dismiss an open tooltip. The trigger is keyboard accessible with `tabIndex={0}`.
+- **Screen Readers**: Screen readers announce the tooltip content when it becomes visible through the `aria-describedby` relationship. The trigger relationship to the tooltip is programmatic.
+- **Focus Management**: Tooltips appear on both hover and keyboard focus, ensuring users navigating with assistive technology receive contextual information.
+
+## Do / Don't
+
+### Do
+
+```jsx
+// Good: Concise, helpful information
+<Tooltip content="Download file as PDF">
+  <button>Download</button>
+</Tooltip>
+```
+
+### Don't
+
+```jsx
+// Bad: Repeating visible text or overly verbose
+<Tooltip content="Click this button to download your document as a portable document format file which can be opened on any device">
+  <button>Download</button>
+</Tooltip>
+```

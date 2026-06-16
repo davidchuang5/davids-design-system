@@ -6,4 +6,5 @@ storybook-static
 # ds-agent
 ds-agent/node_modules
 ds-agent/run-log.json
+ds-agent/.env
 generated/

@@ -1,0 +1,191 @@
+import { Dropdown } from './Dropdown'
+
+# Dropdown
+
+## Overview
+
+The Dropdown component is a select menu that displays a list of options in a popover triggered by a button. Use it when you need to let users choose one value from a list of options without taking up vertical space on the page. The component handles keyboard navigation, focus management, and click-outside closing automatically.
+
+## Usage
+
+```jsx
+import { Dropdown } from '@puma-ui/Dropdown'
+
+const items = [
+  { id: '1', label: 'Option 1' },
+  { id: '2', label: 'Option 2' },
+  { id: '3', label: 'Option 3' },
+]
+
+export function DropdownExample() {
+  const [value, setValue] = useState(null)
+
+  return (
+    <Dropdown
+      items={items}
+      value={value}
+      onChange={setValue}
+      triggerLabel="Choose an option"
+    />
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `DropdownItem[]` | Required | Array of menu items with `id`, `label`, and optional `disabled` properties |
+| `value` | `string` | `undefined` | The id of the currently selected item |
+| `onChange` | `(itemId: string) => void` | `undefined` | Callback fired when a user selects an item |
+| `triggerLabel` | `string` | Required | Text displayed on the trigger button; replaced by selected item label when a value is set |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant of the dropdown trigger button |
+| `disabled` | `boolean` | `false` | Disables the dropdown trigger and prevents opening |
+
+### DropdownItem Shape
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the item; passed to `onChange` callback |
+| `label` | `string` | Yes | Display text for the menu item |
+| `disabled` | `boolean` | No | Disables the item so it cannot be selected; disabled items are skipped in keyboard navigation |
+
+## Examples
+
+### Basic Dropdown
+
+```jsx
+<Dropdown
+  items={[
+    { id: 'apple', label: 'Apple' },
+    { id: 'banana', label: 'Banana' },
+    { id: 'orange', label: 'Orange' },
+  ]}
+  triggerLabel="Pick a fruit"
+  onChange={(id) => console.log(id)}
+/>
+```
+
+### With Selected Value
+
+```jsx
+const [selected, setSelected] = useState('banana')
+
+<Dropdown
+  items={[
+    { id: 'apple', label: 'Apple' },
+    { id: 'banana', label: 'Banana' },
+    { id: 'orange', label: 'Orange' },
+  ]}
+  value={selected}
+  triggerLabel="Pick a fruit"
+  onChange={setSelected}
+/>
+```
+
+### Different Sizes
+
+```jsx
+<Dropdown
+  items={[...]}
+  size="sm"
+  triggerLabel="Small"
+  onChange={(id) => console.log(id)}
+/>
+
+<Dropdown
+  items={[...]}
+  size="md"
+  triggerLabel="Medium"
+  onChange={(id) => console.log(id)}
+/>
+
+<Dropdown
+  items={[...]}
+  size="lg"
+  triggerLabel="Large"
+  onChange={(id) => console.log(id)}
+/>
+```
+
+### With Disabled Items
+
+```jsx
+<Dropdown
+  items={[
+    { id: '1', label: 'Available option' },
+    { id: '2', label: 'Unavailable option', disabled: true },
+    { id: '3', label: 'Another available option' },
+  ]}
+  triggerLabel="Choose"
+  onChange={(id) => console.log(id)}
+/>
+```
+
+### Disabled Dropdown
+
+```jsx
+<Dropdown
+  items={[...]}
+  disabled={true}
+  triggerLabel="Disabled"
+  onChange={(id) => console.log(id)}
+/>
+```
+
+## Accessibility
+
+### Keyboard Navigation
+
+- **Enter or Space**: Opens the menu when focused on the trigger button; selects the highlighted item when the menu is open
+- **Arrow Down**: Opens the menu when focused on the trigger button (if closed); moves highlight to the next enabled item in the menu
+- **Arrow Up**: Moves highlight to the previous enabled item in the menu; wraps to the last item at the top
+- **Escape**: Closes the menu and returns focus to the trigger button
+- Disabled items are skipped during keyboard navigation
+
+### ARIA Attributes
+
+- The trigger button has `aria-haspopup="listbox"` to indicate it controls a listbox menu
+- The trigger button has `aria-expanded` that reflects the open/closed state of the menu
+- The menu element has `role="listbox"`
+- Each menu item has `role="option"` and `aria-selected` reflecting its selection state
+- The trigger button has `aria-label` combining the trigger label and "dropdown menu"
+
+### Screen Reader Notes
+
+- Screen readers announce the trigger button's state, including whether the menu is expanded
+- When an item is selected, the trigger button label updates to reflect the selection
+- Disabled items are announced as unavailable and cannot be selected
+
+## Do / Don't
+
+### Do
+
+```jsx
+// Good: Use a clear, concise trigger label
+<Dropdown
+  items={items}
+  triggerLabel="Select a category"
+  onChange={handleChange}
+/>
+
+// Good: Provide meaningful item labels
+const items = [
+  { id: 'electronics', label: 'Electronics' },
+  { id: 'clothing', label: 'Clothing' },
+  { id: 'books', label: 'Books' },
+]
+```
+
+### Don't
+
+```jsx
+// Bad: Omitting triggerLabel makes the purpose unclear
+<Dropdown items={items} onChange={handleChange} />
+
+// Bad: Using unclear or generic item labels
+const items = [
+  { id: '1', label: 'Option 1' },
+  { id: '2', label: 'Option 2' },
+]
+```

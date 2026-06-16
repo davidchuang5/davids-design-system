@@ -1,0 +1,134 @@
+# Button
+
+## Overview
+
+The Button component is a fundamental interactive element used to trigger actions or navigate the user interface. It supports multiple visual styles (primary, secondary, ghost, danger), sizes (small, medium, large), and states (loading, disabled) to accommodate different contexts and design needs. Use buttons for user-triggered actions like form submission, navigation, or destructive operations.
+
+## Usage
+
+### Basic Button
+
+```jsx
+import { Button } from '@puma-ui/button'
+
+export default function Example() {
+  return (
+    <Button onClick={() => console.log('Clicked')}>
+      Click me
+    </Button>
+  )
+}
+```
+
+### Variants
+
+```jsx
+<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+  <Button variant="primary">Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="ghost">Ghost</Button>
+  <Button variant="danger">Danger</Button>
+</div>
+```
+
+### Sizes
+
+```jsx
+<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+  <Button size="sm">Small</Button>
+  <Button size="md">Medium</Button>
+  <Button size="lg">Large</Button>
+</div>
+```
+
+### Loading State
+
+```jsx
+<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+  <Button loading>Loading...</Button>
+  <Button variant="secondary" loading>Saving</Button>
+</div>
+```
+
+### Disabled State
+
+```jsx
+<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+  <Button disabled>Disabled</Button>
+  <Button variant="danger" disabled>Cannot delete</Button>
+</div>
+```
+
+### Combined States
+
+```jsx
+<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+  <Button variant="primary" size="lg" loading>
+    Submitting form
+  </Button>
+  <Button variant="ghost" size="sm" disabled>
+    Archived
+  </Button>
+</div>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Visual style variant. Primary for main actions, secondary for supporting actions, ghost for subtle actions, danger for destructive operations. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size. Small for compact layouts, medium for standard use, large for prominent actions. |
+| `loading` | `boolean` | `false` | Loading state indicator. Automatically disables the button, displays a spinner, and sets `aria-busy="true"`. |
+| `disabled` | `boolean` | `false` | Disabled state. Prevents user interaction and applies disabled styling. |
+| `children` | `React.ReactNode` | — | Button label or content. |
+| `className` | `string` | — | Additional CSS class names for custom styling. |
+| `...` | `React.ButtonHTMLAttributes<HTMLButtonElement>` | — | All standard HTML button attributes (e.g., `onClick`, `type`, `form`, `name`). |
+
+## Accessibility
+
+The Button component includes built-in accessibility features:
+
+- **Focus Management:** Buttons are keyboard accessible by default. The browser handles focus-visible outline styling to indicate focus state for keyboard navigation.
+- **Disabled State:** When disabled, the button automatically receives `aria-disabled="true"` to announce its disabled state to assistive technologies.
+- **Loading State:** When loading, the button receives `aria-busy="true"` to announce the busy state. The loading spinner is marked as `aria-hidden="true"` since the aria-busy attribute conveys the loading state.
+- **Button Role:** The component uses the native `<button>` element, which has an implicit button role and is recognized by all assistive technologies.
+- **Keyboard Navigation:** Buttons respond to Enter and Space key presses by default through native HTML button behavior.
+- **Screen Reader Announcements:** Button text is automatically announced. When loading, screen readers announce the button as busy, and when disabled, they announce it as disabled.
+
+## Do / Don't
+
+### Do
+
+```jsx
+// Correct: Clear label text that describes the action
+<Button variant="primary" onClick={handleSubmit}>
+  Submit Form
+</Button>
+
+// Correct: Use variants appropriately
+<Button variant="danger" onClick={handleDelete}>
+  Delete Account
+</Button>
+
+// Correct: Indicate loading state during async operations
+<Button loading>
+  Saving changes
+</Button>
+```
+
+### Don't
+
+```jsx
+// Incorrect: Vague or missing button text
+<Button>Click</Button>
+
+// Incorrect: Using primary for minor actions
+<Button variant="primary" onClick={handleCancel}>
+  Cancel
+</Button>
+
+// Incorrect: Disabling button without feedback
+<Button disabled>
+  Submit
+</Button>
+```

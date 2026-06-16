@@ -1,0 +1,174 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-spacing-2);
+  font-family: var(--ds-font-family-sans);
+  font-weight: var(--ds-font-weight-semibold);
+  border: var(--ds-border-width-1) solid transparent;
+  border-radius: var(--ds-border-radius-md);
+  cursor: pointer;
+  transition: all var(--ds-duration-fast) var(--ds-easing-ease-in-out);
+  position: relative;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:focus-visible {
+  outline: var(--ds-border-width-2) solid var(--ds-color-primary-800);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   VARIANT: PRIMARY (Black accent)
+   ========================================================================= */
+.variant-primary {
+  background-color: var(--ds-color-primary-800);
+  color: var(--ds-color-primary-800-foreground);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.variant-primary:hover:not(:disabled) {
+  background-color: var(--ds-color-primary-900);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.variant-primary:active:not(:disabled) {
+  background-color: var(--ds-color-primary-800);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+/* =========================================================================
+   VARIANT: SECONDARY (Warm neutral)
+   ========================================================================= */
+.variant-secondary {
+  background-color: var(--ds-color-neutral-200);
+  color: var(--ds-color-neutral-200-foreground);
+  border-color: var(--ds-color-neutral-300);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.variant-secondary:hover:not(:disabled) {
+  background-color: var(--ds-color-neutral-300);
+  border-color: var(--ds-color-neutral-400);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.variant-secondary:active:not(:disabled) {
+  background-color: var(--ds-color-neutral-200);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+/* =========================================================================
+   VARIANT: GHOST (Transparent with border)
+   ========================================================================= */
+.variant-ghost {
+  background-color: transparent;
+  color: var(--ds-color-neutral-700);
+  border-color: var(--ds-color-neutral-300);
+}
+
+.variant-ghost:hover:not(:disabled) {
+  background-color: var(--ds-color-neutral-50);
+  border-color: var(--ds-color-neutral-400);
+}
+
+.variant-ghost:active:not(:disabled) {
+  background-color: var(--ds-color-neutral-100);
+}
+
+/* =========================================================================
+   VARIANT: DANGER (Error state)
+   ========================================================================= */
+.variant-danger {
+  background-color: var(--ds-color-error-600);
+  color: var(--ds-color-error-600-foreground);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.variant-danger:hover:not(:disabled) {
+  background-color: var(--ds-color-error-700);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.variant-danger:active:not(:disabled) {
+  background-color: var(--ds-color-error-600);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+/* =========================================================================
+   SIZE: SMALL
+   ========================================================================= */
+.size-sm {
+  font-size: var(--ds-font-size-xs);
+  padding: var(--ds-spacing-1) var(--ds-spacing-3);
+  line-height: var(--ds-line-height-tight);
+  min-height: 32px;
+}
+
+/* =========================================================================
+   SIZE: MEDIUM (Default)
+   ========================================================================= */
+.size-md {
+  font-size: var(--ds-font-size-sm);
+  padding: var(--ds-spacing-2) var(--ds-spacing-4);
+  line-height: var(--ds-line-height-normal);
+  min-height: 40px;
+}
+
+/* =========================================================================
+   SIZE: LARGE
+   ========================================================================= */
+.size-lg {
+  font-size: var(--ds-font-size-md);
+  padding: var(--ds-spacing-3) var(--ds-spacing-6);
+  line-height: var(--ds-line-height-normal);
+  min-height: 48px;
+}
+
+/* =========================================================================
+   STATE: DISABLED
+   ========================================================================= */
+.disabled {
+  opacity: var(--ds-opacity-50);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.disabled:hover,
+.disabled:active,
+.disabled:focus-visible {
+  background-color: inherit;
+  border-color: inherit;
+  transform: none;
+}
+
+/* =========================================================================
+   STATE: LOADING
+   ========================================================================= */
+.loading {
+  color: inherit;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin var(--ds-duration-normal) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+}

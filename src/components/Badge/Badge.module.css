@@ -1,0 +1,102 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ds-font-family-sans);
+  font-weight: var(--ds-font-weight-medium);
+  white-space: nowrap;
+  border-radius: var(--ds-border-radius-md);
+  transition: background-color var(--ds-duration-fast) var(--ds-easing-ease-out);
+}
+
+/* =========================================================================
+   SIZE VARIANTS
+   ========================================================================= */
+
+.size-sm {
+  font-size: var(--ds-font-size-2xs);
+  padding: var(--ds-spacing-1) var(--ds-spacing-2);
+  line-height: var(--ds-line-height-tight);
+}
+
+.size-md {
+  font-size: var(--ds-font-size-xs);
+  padding: var(--ds-spacing-2) var(--ds-spacing-3);
+  line-height: var(--ds-line-height-snug);
+}
+
+.size-lg {
+  font-size: var(--ds-font-size-sm);
+  padding: var(--ds-spacing-2) var(--ds-spacing-4);
+  line-height: var(--ds-line-height-normal);
+}
+
+/* =========================================================================
+   VARIANT — DEFAULT (Neutral Surface)
+   ========================================================================= */
+
+.variant-default {
+  background-color: var(--ds-color-neutral-100);
+  color: var(--ds-color-neutral-100-foreground);
+  border: var(--ds-border-width-0) solid transparent;
+}
+
+.variant-default:hover {
+  background-color: var(--ds-color-neutral-200);
+}
+
+/* =========================================================================
+   VARIANT — PRIMARY (Black Accent)
+   ========================================================================= */
+
+.variant-primary {
+  background-color: var(--ds-color-primary-800);
+  color: var(--ds-color-primary-800-foreground);
+  border: var(--ds-border-width-0) solid transparent;
+}
+
+.variant-primary:hover {
+  background-color: var(--ds-color-primary-900);
+}
+
+/* =========================================================================
+   VARIANT — SUCCESS (Warm Sage Green)
+   ========================================================================= */
+
+.variant-success {
+  background-color: var(--ds-color-success-100);
+  color: var(--ds-color-success-100-foreground);
+  border: var(--ds-border-width-0) solid transparent;
+}
+
+.variant-success:hover {
+  background-color: var(--ds-color-success-200);
+}
+
+/* =========================================================================
+   VARIANT — WARNING (Warm Ochre)
+   ========================================================================= */
+
+.variant-warning {
+  background-color: var(--ds-color-warning-100);
+  color: var(--ds-color-warning-100-foreground);
+  border: var(--ds-border-width-0) solid transparent;
+}
+
+.variant-warning:hover {
+  background-color: var(--ds-color-warning-200);
+}
+
+/* =========================================================================
+   VARIANT — DANGER (Warm Terracotta Red)
+   ========================================================================= */
+
+.variant-danger {
+  background-color: var(--ds-color-error-100);
+  color: var(--ds-color-error-100-foreground);
+  border: var(--ds-border-width-0) solid transparent;
+}
+
+.variant-danger:hover {
+  background-color: var(--ds-color-error-200);
+}
