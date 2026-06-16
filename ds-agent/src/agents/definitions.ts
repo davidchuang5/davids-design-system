@@ -18,6 +18,7 @@ export const agentDefinitions: Record<string, AgentDefinition> = {
   'component-agent': {
     description: 'Scaffolds a single React component with types and CSS Module.',
     prompt: COMPONENT_AGENT_PROMPT,
+    
     tools: ['Read', 'Write', 'Glob'],
     model: 'sonnet',
   } as AgentDefinition,

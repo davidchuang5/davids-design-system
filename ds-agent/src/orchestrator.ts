@@ -4,6 +4,7 @@ import { query } from '@anthropic-ai/claude-agent-sdk';
 import { agentDefinitions } from './agents/definitions.js';
 import type { DesignSystemSpec } from './types.js';
 import { TOKEN_AGENT_PROMPT } from './agents/prompts.js';
+import { generateTokenFiles } from './generate-tokens.js';
 import * as readline from 'readline';
 import * as fs from 'fs/promises';
 
@@ -109,6 +110,10 @@ export async function orchestrate(spec: DesignSystemSpec) {
     await fs.writeFile('./run-log.json', JSON.stringify(runLog, null, 2));
     process.exit(0);
   }
+
+  // Generate tokens.js + tokens.d.ts from the (possibly edited) tokens.json
+  console.log('\n── Generating JS token exports ──\n');
+  await generateTokenFiles(`${SRC_DIR}/tokens/tokens.json`, `${SRC_DIR}/tokens`);
 
   // ── PHASES 2–3: Components, Tests & Docs ────────────────────
   console.log('\n── Phases 2–3: Components → Tests & Docs ──\n');
