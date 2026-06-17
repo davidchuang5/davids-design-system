@@ -1,116 +1,212 @@
+import React, {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+} from 'react'
+import ReactDOM from 'react-dom'
 import styles from './Modal.module.css'
-import React, { useEffect, useRef } from 'react'
+import type { ModalProps } from './types'
 
-export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
-  open: boolean
-  onClose: () => void
-  title?: string | React.ReactNode
-  children?: React.ReactNode
-  footer?: React.ReactNode
-  closeOnEscape?: boolean
-  closeOnOverlayClick?: boolean
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Returns an array of all keyboard-focusable elements inside a container. */
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), textarea:not([disabled]), ' +
+        'input:not([disabled]), select:not([disabled]), ' +
+        '[tabindex]:not([tabindex="-1"])',
+    ),
+  )
 }
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
   (
     {
       open,
       onClose,
-      title,
+      size = 'md',
+      disableBackdropClose = false,
+      disableEscClose = false,
+      header,
       children,
       footer,
-      closeOnEscape = true,
-      closeOnOverlayClick = true,
       className,
-      ...props
+      style,
+      'aria-label': ariaLabel,
     },
-    ref
+    ref,
   ) => {
-    const dialogRef = useRef<HTMLDialogElement>(null)
+    const dialogRef = useRef<HTMLDivElement>(null)
+    const previouslyFocusedRef = useRef<HTMLElement | null>(null)
 
-    useEffect(() => {
-      const dialog = dialogRef.current
-      if (!dialog) return
+    // Auto-generated id so we can wire up aria-labelledby when a header exists
+    const headingId = useId()
 
-      if (open) {
-        dialog.showModal()
-      } else {
-        dialog.close()
-      }
-    }, [open])
+    // -------------------------------------------------------------------------
+    // ESC key handler
+    // -------------------------------------------------------------------------
+    const handleKeyDown = useCallback(
+      (event: KeyboardEvent) => {
+        if (!open) return
 
-    useEffect(() => {
-      const dialog = dialogRef.current
-      if (!dialog) return
-
-      const handleCancel = (event: Event) => {
-        if (closeOnEscape) {
-          event.preventDefault()
+        if (event.key === 'Escape' && !disableEscClose) {
+          event.stopPropagation()
           onClose()
+          return
+        }
+
+        // Focus trap — keep Tab cycling inside the dialog
+        if (event.key === 'Tab' && dialogRef.current) {
+          const focusable = getFocusableElements(dialogRef.current)
+          if (focusable.length === 0) {
+            event.preventDefault()
+            return
+          }
+
+          const first = focusable[0]
+          const last = focusable[focusable.length - 1]
+
+          if (event.shiftKey) {
+            if (document.activeElement === first) {
+              event.preventDefault()
+              last.focus()
+            }
+          } else {
+            if (document.activeElement === last) {
+              event.preventDefault()
+              first.focus()
+            }
+          }
+        }
+      },
+      [open, disableEscClose, onClose],
+    )
+
+    // -------------------------------------------------------------------------
+    // Lifecycle — focus management + keyboard listener
+    // -------------------------------------------------------------------------
+    useEffect(() => {
+      if (open) {
+        // Remember what had focus before we opened
+        previouslyFocusedRef.current = document.activeElement as HTMLElement
+
+        // Move focus into the dialog on the next tick so the portal is rendered
+        const raf = requestAnimationFrame(() => {
+          if (dialogRef.current) {
+            const focusable = getFocusableElements(dialogRef.current)
+            if (focusable.length > 0) {
+              focusable[0].focus()
+            } else {
+              dialogRef.current.focus()
+            }
+          }
+        })
+
+        document.addEventListener('keydown', handleKeyDown)
+
+        // Prevent background scroll
+        const previousOverflow = document.body.style.overflow
+        document.body.style.overflow = 'hidden'
+
+        return () => {
+          cancelAnimationFrame(raf)
+          document.removeEventListener('keydown', handleKeyDown)
+          document.body.style.overflow = previousOverflow
+
+          // Restore focus to the element that was active before the modal opened
+          if (previouslyFocusedRef.current) {
+            previouslyFocusedRef.current.focus()
+          }
         }
       }
+    }, [open, handleKeyDown])
 
-      const handleClose = () => {
-        onClose()
-      }
-
-      dialog.addEventListener('cancel', handleCancel)
-      dialog.addEventListener('close', handleClose)
-
-      return () => {
-        dialog.removeEventListener('cancel', handleCancel)
-        dialog.removeEventListener('close', handleClose)
-      }
-    }, [onClose, closeOnEscape])
-
-    const handleOverlayClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-      if (closeOnOverlayClick && event.target === dialogRef.current) {
+    // -------------------------------------------------------------------------
+    // Backdrop click
+    // -------------------------------------------------------------------------
+    const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+      // Only fire if the click landed directly on the backdrop overlay, not on
+      // any child element inside the dialog panel.
+      if (event.target === event.currentTarget && !disableBackdropClose) {
         onClose()
       }
     }
 
-    return (
-      <dialog
-        ref={dialogRef}
-        className={`${styles.modal} ${className || ''}`}
-        onClick={handleOverlayClick}
-        {...props}
+    // -------------------------------------------------------------------------
+    // Render — skip entirely when closed (no DOM cost)
+    // -------------------------------------------------------------------------
+    if (!open) return null
+
+    const dialog = (
+      <div
+        className={`${styles.backdrop} ${open ? styles.backdropVisible : ''}`}
+        onClick={handleBackdropClick}
+        // Backdrop itself is presentational; the dialog role is on the panel
+        aria-hidden="false"
       >
-        <div className={styles.content}>
-          {title && (
+        <div
+          ref={(node) => {
+            // Merge forwardRef with our internal ref
+            dialogRef.current = node
+            if (typeof ref === 'function') {
+              ref(node)
+            } else if (ref) {
+              ;(ref as React.MutableRefObject<HTMLDivElement | null>).current =
+                node
+            }
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={!header ? ariaLabel : undefined}
+          aria-labelledby={header ? headingId : undefined}
+          tabIndex={-1}
+          className={[
+            styles.panel,
+            styles[`size-${size}`],
+            className,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          style={style}
+        >
+          {/* ---- Header ---------------------------------------------------- */}
+          {header && (
             <div className={styles.header}>
-              <h2 className={styles.title}>{title}</h2>
+              <div id={headingId} className={styles.headerTitle}>
+                {header}
+              </div>
               <button
-                className={styles.closeButton}
-                onClick={onClose}
-                aria-label="Close modal"
                 type="button"
+                className={styles.closeButton}
+                aria-label="Close modal"
+                onClick={onClose}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                {/* Simple × glyph — no icon dependency */}
+                <span aria-hidden="true">&#x2715;</span>
               </button>
             </div>
           )}
 
-          {children && <div className={styles.body}>{children}</div>}
+          {/* ---- Body ------------------------------------------------------ */}
+          <div className={styles.body}>{children}</div>
 
+          {/* ---- Footer ---------------------------------------------------- */}
           {footer && <div className={styles.footer}>{footer}</div>}
         </div>
-      </dialog>
+      </div>
     )
-  }
+
+    // Render into a portal so the modal sits outside the normal DOM hierarchy
+    return ReactDOM.createPortal(dialog, document.body)
+  },
 )
 
 Modal.displayName = 'Modal'

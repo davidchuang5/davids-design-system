@@ -1,0 +1,191 @@
+/* =============================================================================
+   Pagination — CSS Module
+   Uses only --ds- custom properties from variables.css
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Layout
+--------------------------------------------------------------------------- */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Base item (button)
+--------------------------------------------------------------------------- */
+
+.item {
+  /* Reset */
+  appearance: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-tight);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+
+  /* Default colours — warm neutral surfaces */
+  background-color: var(--ds-color-surface-raised);
+  color: var(--ds-color-surface-raised-foreground);
+  border-color: var(--ds-color-neutral-200);
+  border-radius: var(--ds-border-radius-md);
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--ds-color-primary-800);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Sizes
+--------------------------------------------------------------------------- */
+
+.size-sm {
+  font-size: var(--ds-font-size-xs);
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--ds-spacing-8);
+}
+
+.size-md {
+  font-size: var(--ds-font-size-sm);
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--ds-spacing-12);
+}
+
+.size-lg {
+  font-size: var(--ds-font-size-base);
+  min-width: 44px;
+  height: 44px;
+  padding: 0 var(--ds-spacing-16);
+}
+
+/* ---------------------------------------------------------------------------
+   Variants
+--------------------------------------------------------------------------- */
+
+/* --- default --- */
+.variant-default {
+  background-color: var(--ds-color-surface-raised);
+  border-color: var(--ds-color-neutral-200);
+  color: var(--ds-color-neutral-800);
+}
+
+.variant-default:hover:not(:disabled) {
+  background-color: var(--ds-color-neutral-100);
+  border-color: var(--ds-color-neutral-300);
+}
+
+.variant-default.active {
+  background-color: var(--ds-color-primary-900);
+  border-color: var(--ds-color-primary-900);
+  color: var(--ds-color-primary-900-foreground);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+/* --- outline --- */
+.variant-outline {
+  background-color: transparent;
+  border-color: var(--ds-color-neutral-400);
+  color: var(--ds-color-neutral-800);
+}
+
+.variant-outline:hover:not(:disabled) {
+  background-color: var(--ds-color-neutral-50);
+  border-color: var(--ds-color-neutral-600);
+}
+
+.variant-outline.active {
+  background-color: transparent;
+  border-color: var(--ds-color-primary-900);
+  color: var(--ds-color-primary-900);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+/* --- ghost --- */
+.variant-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--ds-color-neutral-700);
+}
+
+.variant-ghost:hover:not(:disabled) {
+  background-color: var(--ds-color-neutral-100);
+  border-color: transparent;
+}
+
+.variant-ghost.active {
+  background-color: var(--ds-color-primary-900);
+  border-color: transparent;
+  color: var(--ds-color-primary-900-foreground);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+/* ---------------------------------------------------------------------------
+   Disabled state (all variants)
+--------------------------------------------------------------------------- */
+
+.item:disabled,
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Ellipsis
+--------------------------------------------------------------------------- */
+
+.ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ds-color-neutral-500);
+  font-size: var(--ds-font-size-sm);
+  letter-spacing: 0.05em;
+  user-select: none;
+  cursor: default;
+  /* Match the min-width of the corresponding .size-* so the ellipsis slot is
+     the same width as a page button at every size. */
+}
+
+/* Size-matched widths for the ellipsis span */
+.ellipsis.size-sm {
+  min-width: 28px;
+  height: 28px;
+  font-size: var(--ds-font-size-xs);
+}
+
+.ellipsis.size-md {
+  min-width: 36px;
+  height: 36px;
+  font-size: var(--ds-font-size-sm);
+}
+
+.ellipsis.size-lg {
+  min-width: 44px;
+  height: 44px;
+  font-size: var(--ds-font-size-base);
+}

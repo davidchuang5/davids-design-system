@@ -5,6 +5,7 @@ import {
   COMPONENT_AGENT_PROMPT,
   TEST_AGENT_PROMPT,
   DOCS_AGENT_PROMPT,
+  STORYBOOK_AGENT_PROMPT,
 } from './prompts.js';
 
 export const agentDefinitions: Record<string, AgentDefinition> = {
@@ -18,13 +19,20 @@ export const agentDefinitions: Record<string, AgentDefinition> = {
   'component-agent': {
     description: 'Scaffolds a single React component with types and CSS Module.',
     prompt: COMPONENT_AGENT_PROMPT,
-    
+
+    tools: ['Read', 'Write', 'Glob'],
+    model: 'sonnet',
+  } as AgentDefinition,
+
+  'storybook-agent': {
+    description: 'Writes Storybook stories for a component.',
+    prompt: STORYBOOK_AGENT_PROMPT,
     tools: ['Read', 'Write', 'Glob'],
     model: 'sonnet',
   } as AgentDefinition,
 
   'test-agent': {
-    description: 'Writes Storybook stories and Vitest unit tests for a component.',
+    description: 'Writes Vitest unit tests for a component.',
     prompt: TEST_AGENT_PROMPT,
     tools: ['Read', 'Write', 'Glob'],
     model: 'sonnet',

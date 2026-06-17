@@ -1,74 +1,31 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Dropdown } from './Dropdown'
 
+const items = [
+  { id: 'edit', label: 'Edit' },
+  { id: 'duplicate', label: 'Duplicate' },
+  { id: 'divider-1', label: '', divider: true },
+  { id: 'delete', label: 'Delete' },
+]
+
 const meta: Meta<typeof Dropdown> = {
   component: Dropdown,
-  args: {
-    triggerLabel: 'Select an option',
-    items: [
-      { id: '1', label: 'Option 1' },
-      { id: '2', label: 'Option 2' },
-      { id: '3', label: 'Option 3' },
-    ],
-  },
+  args: { label: 'Actions', items },
 }
-
 export default meta
+
 type Story = StoryObj<typeof Dropdown>
 
 export const Default: Story = {}
 
-export const WithSelectedValue: Story = {
-  args: {
-    value: '2',
-  },
-}
+export const Ghost: Story = { args: { variant: 'ghost' } }
 
-export const SizeSmall: Story = {
-  args: {
-    size: 'sm',
-  },
-}
+export const Outline: Story = { args: { variant: 'outline' } }
 
-export const SizeMedium: Story = {
-  args: {
-    size: 'md',
-  },
-}
+export const Disabled: Story = { args: { disabled: true } }
 
-export const SizeLarge: Story = {
-  args: {
-    size: 'lg',
-  },
-}
+export const Small: Story = { args: { size: 'sm' } }
 
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
-}
+export const Large: Story = { args: { size: 'lg' } }
 
-export const WithDisabledItem: Story = {
-  args: {
-    items: [
-      { id: '1', label: 'Option 1' },
-      { id: '2', label: 'Option 2 (disabled)', disabled: true },
-      { id: '3', label: 'Option 3' },
-    ],
-  },
-}
-
-export const WithManyItems: Story = {
-  args: {
-    items: [
-      { id: '1', label: 'Option 1' },
-      { id: '2', label: 'Option 2' },
-      { id: '3', label: 'Option 3' },
-      { id: '4', label: 'Option 4' },
-      { id: '5', label: 'Option 5' },
-      { id: '6', label: 'Option 6' },
-      { id: '7', label: 'Option 7' },
-      { id: '8', label: 'Option 8' },
-    ],
-  },
-}
+export const TopStart: Story = { args: { placement: 'top-start' } }

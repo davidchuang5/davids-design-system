@@ -1,0 +1,240 @@
+/* =============================================================================
+   Input — CSS Module
+   All values are drawn exclusively from puma-ui design tokens (--ds-* variables).
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Wrapper — contains label + field row + helper/error line
+--------------------------------------------------------------------------- */
+.wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-4);
+  font-family: inherit;
+}
+
+.wrapper.fullWidth {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Label
+--------------------------------------------------------------------------- */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-spacing-4);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-tight);
+  color: var(--ds-color-neutral-800);
+}
+
+.required {
+  color: var(--ds-color-primary-700);
+  font-weight: var(--ds-font-weight-semibold);
+  /* The asterisk is inserted via aria-hidden in the JSX */
+}
+
+/* ---------------------------------------------------------------------------
+   Field row — icon slots + native input
+--------------------------------------------------------------------------- */
+.fieldRow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  background-color: var(--ds-color-surface-raised);
+  border: 1.5px solid var(--ds-color-neutral-300);
+  border-radius: var(--ds-border-radius-md);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+  /* Contain the icon slots */
+  overflow: hidden;
+}
+
+/* Focus-within ring — uses primary-900 for the warm-black accent */
+.fieldRow:focus-within {
+  border-color: var(--ds-color-primary-900);
+  box-shadow: 0 0 0 3px var(--ds-color-primary-100);
+  outline: none;
+}
+
+/* Hover (only when not already focused / disabled) */
+.fieldRow:not(.fieldRowDisabled):not(:focus-within):hover {
+  border-color: var(--ds-color-neutral-500);
+}
+
+/* Error state */
+.fieldRowError {
+  border-color: var(--ds-color-primary-700);
+  background-color: var(--ds-color-surface-raised);
+}
+
+.fieldRowError:focus-within {
+  border-color: var(--ds-color-primary-900);
+  box-shadow: 0 0 0 3px var(--ds-color-primary-200);
+}
+
+/* Disabled state */
+.fieldRowDisabled {
+  background-color: var(--ds-color-surface-sunken);
+  border-color: var(--ds-color-neutral-200);
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — filled
+--------------------------------------------------------------------------- */
+.variantFilled .fieldRow {
+  background-color: var(--ds-color-surface-sunken);
+  border-color: transparent;
+}
+
+.variantFilled .fieldRow:not(.fieldRowDisabled):not(:focus-within):hover {
+  background-color: var(--ds-color-neutral-200);
+  border-color: transparent;
+}
+
+.variantFilled .fieldRow:focus-within {
+  background-color: var(--ds-color-surface-raised);
+  border-color: var(--ds-color-primary-900);
+  box-shadow: 0 0 0 3px var(--ds-color-primary-100);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — ghost
+--------------------------------------------------------------------------- */
+.variantGhost .fieldRow {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.variantGhost .fieldRow:not(.fieldRowDisabled):not(:focus-within):hover {
+  background-color: var(--ds-color-neutral-100);
+  border-color: var(--ds-color-neutral-200);
+}
+
+.variantGhost .fieldRow:focus-within {
+  background-color: var(--ds-color-surface-raised);
+  border-color: var(--ds-color-primary-900);
+  box-shadow: 0 0 0 3px var(--ds-color-primary-100);
+}
+
+/* ---------------------------------------------------------------------------
+   Native <input>
+--------------------------------------------------------------------------- */
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  color: var(--ds-color-neutral-900);
+  line-height: var(--ds-line-height-normal);
+  /* Placeholder */
+}
+
+.input::placeholder {
+  color: var(--ds-color-neutral-400);
+  font-weight: var(--ds-font-weight-regular);
+}
+
+.input:disabled {
+  color: var(--ds-color-neutral-400);
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------------
+   Sizes — applied to .fieldRow and .input together via the size modifier on wrapper
+--------------------------------------------------------------------------- */
+
+/* sm */
+.sizeSm .fieldRow {
+  border-radius: var(--ds-border-radius-sm);
+}
+
+.sizeSm .input {
+  padding: var(--ds-spacing-4) var(--ds-spacing-8);
+  font-size: var(--ds-font-size-sm);
+}
+
+.sizeSm .iconSlot {
+  width: var(--ds-spacing-32);
+  font-size: var(--ds-font-size-sm);
+}
+
+/* md (default) */
+.sizeMd .fieldRow {
+  border-radius: var(--ds-border-radius-md);
+}
+
+.sizeMd .input {
+  padding: var(--ds-spacing-8) var(--ds-spacing-12);
+  font-size: var(--ds-font-size-base);
+}
+
+.sizeMd .iconSlot {
+  width: var(--ds-spacing-48);
+  font-size: var(--ds-font-size-base);
+}
+
+/* lg */
+.sizeLg .fieldRow {
+  border-radius: var(--ds-border-radius-lg);
+}
+
+.sizeLg .input {
+  padding: var(--ds-spacing-12) var(--ds-spacing-16);
+  font-size: var(--ds-font-size-lg);
+}
+
+.sizeLg .iconSlot {
+  width: var(--ds-spacing-48);
+  font-size: var(--ds-font-size-lg);
+}
+
+/* ---------------------------------------------------------------------------
+   Icon slots
+--------------------------------------------------------------------------- */
+.iconSlot {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ds-color-neutral-500);
+  /* Width driven by size modifier above */
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Shrink input padding when an icon already provides visual separation */
+.hasLeadingIcon .input {
+  padding-left: 0;
+}
+
+.hasTrailingIcon .input {
+  padding-right: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Helper / error text
+--------------------------------------------------------------------------- */
+.subText {
+  font-size: var(--ds-font-size-xs);
+  line-height: var(--ds-line-height-normal);
+  font-weight: var(--ds-font-weight-regular);
+}
+
+.helperText {
+  color: var(--ds-color-neutral-500);
+}
+
+.errorText {
+  color: var(--ds-color-primary-700);
+  font-weight: var(--ds-font-weight-medium);
+}

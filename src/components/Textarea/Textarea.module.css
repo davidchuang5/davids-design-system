@@ -1,0 +1,247 @@
+/* =============================================================================
+   Textarea — CSS Module
+   puma-ui design system — warm neutrals, black primary accent, rounded style.
+   All values reference design tokens from variables.css; no hardcoded primitives.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Root wrapper — provides the stacking context for label + field + footer
+--------------------------------------------------------------------------- */
+.root {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--ds-spacing-4);
+  font-family:    inherit;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.fullWidth .textarea {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Label
+--------------------------------------------------------------------------- */
+.label {
+  display:     inline-flex;
+  align-items: baseline;
+  gap:         var(--ds-spacing-4);
+
+  font-size:   var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-snug);
+  color:       var(--ds-color-neutral-900);
+
+  cursor:      default;
+}
+
+.label.disabled {
+  opacity: 0.45;
+  cursor:  not-allowed;
+}
+
+/* Required asterisk */
+.required {
+  color:       var(--ds-color-primary-700);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: 1;
+  /* prevent asterisk from participating in baseline alignment */
+  align-self:  flex-start;
+}
+
+/* ---------------------------------------------------------------------------
+   Core <textarea> element
+--------------------------------------------------------------------------- */
+.textarea {
+  /* Reset */
+  appearance: none;
+  background:  none;
+  outline:     none;
+  margin:      0;
+
+  /* Typography */
+  font-family:  inherit;
+  font-weight:  var(--ds-font-weight-regular);
+  line-height:  var(--ds-line-height-relaxed);
+  color:        var(--ds-color-surface-base-foreground);
+
+  /* Shape */
+  border-radius: var(--ds-border-radius-md);
+  border:        1.5px solid transparent;
+
+  /* Transitions */
+  transition:
+    border-color   150ms ease,
+    background-color 150ms ease,
+    box-shadow     150ms ease,
+    color          150ms ease;
+
+  /* Disable horizontal resize by default — set by .resize-* modifiers */
+  resize: vertical;
+}
+
+.textarea::placeholder {
+  color:   var(--ds-color-neutral-400);
+  opacity: 1;
+}
+
+.textarea:focus-visible {
+  outline:        none;
+  border-color:   var(--ds-color-primary-900);
+  box-shadow:     0 0 0 3px var(--ds-color-primary-200);
+}
+
+.textarea:disabled {
+  opacity:        0.45;
+  cursor:         not-allowed;
+  resize:         none;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Size modifiers
+--------------------------------------------------------------------------- */
+.size-sm .textarea {
+  padding:   var(--ds-spacing-8) var(--ds-spacing-12);
+  font-size: var(--ds-font-size-sm);
+}
+
+.size-md .textarea {
+  padding:   var(--ds-spacing-12) var(--ds-spacing-16);
+  font-size: var(--ds-font-size-base);
+}
+
+.size-lg .textarea {
+  padding:   var(--ds-spacing-16) var(--ds-spacing-24);
+  font-size: var(--ds-font-size-lg);
+}
+
+/* Adjust label size to track the field size */
+.size-sm .label {
+  font-size: var(--ds-font-size-xs);
+}
+
+.size-lg .label {
+  font-size: var(--ds-font-size-base);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — default
+   Outlined border on a raised/white surface.
+--------------------------------------------------------------------------- */
+.variant-default .textarea {
+  background-color: var(--ds-color-surface-raised);
+  border-color:     var(--ds-color-neutral-300);
+}
+
+.variant-default .textarea:hover:not(:disabled):not(.textareaError) {
+  border-color: var(--ds-color-neutral-500);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — filled
+   Uses the sunken/inset surface token; border is hidden until focus.
+--------------------------------------------------------------------------- */
+.variant-filled .textarea {
+  background-color: var(--ds-color-surface-sunken);
+  border-color:     transparent;
+  /* Use a slightly tighter radius to feel more recessed */
+  border-radius:    var(--ds-border-radius-md);
+}
+
+.variant-filled .textarea:hover:not(:disabled):not(.textareaError) {
+  background-color: var(--ds-color-neutral-200);
+}
+
+.variant-filled .textarea:focus-visible {
+  background-color: var(--ds-color-surface-raised);
+  border-color:     var(--ds-color-primary-900);
+  box-shadow:       0 0 0 3px var(--ds-color-primary-200);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — ghost
+   Fully transparent; border and background appear on hover/focus only.
+--------------------------------------------------------------------------- */
+.variant-ghost .textarea {
+  background-color: transparent;
+  border-color:     transparent;
+}
+
+.variant-ghost .textarea:hover:not(:disabled):not(.textareaError) {
+  background-color: var(--ds-color-neutral-50);
+  border-color:     var(--ds-color-neutral-200);
+}
+
+.variant-ghost .textarea:focus-visible {
+  background-color: var(--ds-color-surface-raised);
+  border-color:     var(--ds-color-primary-900);
+  box-shadow:       0 0 0 3px var(--ds-color-primary-200);
+}
+
+/* ---------------------------------------------------------------------------
+   Error state  (appended to textarea, overrides variant border)
+--------------------------------------------------------------------------- */
+.textareaError {
+  border-color:     #d9534f !important;
+  background-color: #fff8f8;
+}
+
+.textareaError:focus-visible {
+  border-color: #d9534f !important;
+  box-shadow:   0 0 0 3px rgba(217, 83, 79, 0.2) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Resize modifiers
+--------------------------------------------------------------------------- */
+.resize-none       .textarea { resize: none; }
+.resize-vertical   .textarea { resize: vertical; }
+.resize-horizontal .textarea { resize: horizontal; }
+.resize-both       .textarea { resize: both; }
+
+/* ---------------------------------------------------------------------------
+   Footer row — helper / error text + character counter
+--------------------------------------------------------------------------- */
+.footer {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             var(--ds-spacing-8);
+  min-height:      1.2em; /* reserve space so layout doesn't jump */
+}
+
+.helperText {
+  font-size:   var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color:       var(--ds-color-neutral-500);
+  flex:        1 1 auto;
+}
+
+.errorMessage {
+  font-size:   var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-normal);
+  color:       #d9534f;
+  flex:        1 1 auto;
+}
+
+.characterCount {
+  font-size:      var(--ds-font-size-xs);
+  font-weight:    var(--ds-font-weight-regular);
+  line-height:    var(--ds-line-height-normal);
+  color:          var(--ds-color-neutral-400);
+  white-space:    nowrap;
+  flex-shrink:    0;
+  /* push counter to the right when there is no helper/error text */
+  margin-left:    auto;
+}
+
+.characterCountOver {
+  color:       #d9534f;
+  font-weight: var(--ds-font-weight-semibold);
+}

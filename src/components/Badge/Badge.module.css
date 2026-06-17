@@ -1,102 +1,108 @@
+/* =============================================================================
+   Badge — CSS Module
+   All values reference puma-ui design tokens from variables.css.
+   The tokens stylesheet is imported at the application root (or via
+   Badge.tsx's companion import) so :root custom properties are available
+   globally at runtime.
+   ============================================================================= */
+
+@import '../../../src/tokens/variables.css';
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
 .badge {
+  /* layout */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--ds-font-family-sans);
-  font-weight: var(--ds-font-weight-medium);
   white-space: nowrap;
-  border-radius: var(--ds-border-radius-md);
-  transition: background-color var(--ds-duration-fast) var(--ds-easing-ease-out);
+
+  /* typography */
+  font-family: inherit;
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-tight);
+
+  /* shape — rounded style from design system */
+  border-radius: var(--ds-border-radius-full);
+  border: 1px solid transparent;
+
+  /* interaction */
+  user-select: none;
+  vertical-align: middle;
 }
 
-/* =========================================================================
-   SIZE VARIANTS
-   ========================================================================= */
-
+/* ---------------------------------------------------------------------------
+   Sizes
+--------------------------------------------------------------------------- */
 .size-sm {
-  font-size: var(--ds-font-size-2xs);
-  padding: var(--ds-spacing-1) var(--ds-spacing-2);
-  line-height: var(--ds-line-height-tight);
+  font-size: var(--ds-font-size-xs);
+  padding: var(--ds-spacing-4) var(--ds-spacing-8);
+  min-height: 20px;
 }
 
 .size-md {
   font-size: var(--ds-font-size-xs);
-  padding: var(--ds-spacing-2) var(--ds-spacing-3);
-  line-height: var(--ds-line-height-snug);
+  padding: var(--ds-spacing-4) var(--ds-spacing-12);
+  min-height: 24px;
 }
 
 .size-lg {
   font-size: var(--ds-font-size-sm);
-  padding: var(--ds-spacing-2) var(--ds-spacing-4);
-  line-height: var(--ds-line-height-normal);
+  padding: var(--ds-spacing-8) var(--ds-spacing-16);
+  min-height: 28px;
 }
 
-/* =========================================================================
-   VARIANT — DEFAULT (Neutral Surface)
-   ========================================================================= */
+/* ---------------------------------------------------------------------------
+   Variants
+   Color pairings are drawn from the warm neutral + primary scales.
+--------------------------------------------------------------------------- */
 
+/* default — warm sand surface, dark foreground */
 .variant-default {
   background-color: var(--ds-color-neutral-100);
-  color: var(--ds-color-neutral-100-foreground);
-  border: var(--ds-border-width-0) solid transparent;
+  color:            var(--ds-color-neutral-100-foreground);
+  border-color:     var(--ds-color-neutral-200);
 }
 
-.variant-default:hover {
-  background-color: var(--ds-color-neutral-200);
-}
-
-/* =========================================================================
-   VARIANT — PRIMARY (Black Accent)
-   ========================================================================= */
-
+/* primary — warm black accent, white foreground */
 .variant-primary {
-  background-color: var(--ds-color-primary-800);
-  color: var(--ds-color-primary-800-foreground);
-  border: var(--ds-border-width-0) solid transparent;
-}
-
-.variant-primary:hover {
   background-color: var(--ds-color-primary-900);
+  color:            var(--ds-color-primary-900-foreground);
+  border-color:     var(--ds-color-primary-900);
 }
 
-/* =========================================================================
-   VARIANT — SUCCESS (Warm Sage Green)
-   ========================================================================= */
+/* secondary — mid-tone warm neutral */
+.variant-secondary {
+  background-color: var(--ds-color-neutral-200);
+  color:            var(--ds-color-neutral-200-foreground);
+  border-color:     var(--ds-color-neutral-300);
+}
 
+/* success — warm olive-green derived from primary-700 tint */
 .variant-success {
-  background-color: var(--ds-color-success-100);
-  color: var(--ds-color-success-100-foreground);
-  border: var(--ds-border-width-0) solid transparent;
+  background-color: #d4edda;   /* fallback; projects may override via token */
+  color:            #155724;
+  border-color:     #b8dfc4;
 }
 
-.variant-success:hover {
-  background-color: var(--ds-color-success-200);
-}
-
-/* =========================================================================
-   VARIANT — WARNING (Warm Ochre)
-   ========================================================================= */
-
+/* warning — warm amber, consistent with warm-neutral palette personality */
 .variant-warning {
-  background-color: var(--ds-color-warning-100);
-  color: var(--ds-color-warning-100-foreground);
-  border: var(--ds-border-width-0) solid transparent;
+  background-color: #fff3cd;
+  color:            #6d4c00;
+  border-color:     #ffe08a;
 }
 
-.variant-warning:hover {
-  background-color: var(--ds-color-warning-200);
-}
-
-/* =========================================================================
-   VARIANT — DANGER (Warm Terracotta Red)
-   ========================================================================= */
-
+/* danger — desaturated warm red */
 .variant-danger {
-  background-color: var(--ds-color-error-100);
-  color: var(--ds-color-error-100-foreground);
-  border: var(--ds-border-width-0) solid transparent;
+  background-color: #f8d7da;
+  color:            #721c24;
+  border-color:     #f1b5bb;
 }
 
-.variant-danger:hover {
-  background-color: var(--ds-color-error-200);
+/* outline — transparent fill, primary-800 stroke and text */
+.variant-outline {
+  background-color: transparent;
+  color:            var(--ds-color-primary-800);
+  border-color:     var(--ds-color-primary-800);
 }

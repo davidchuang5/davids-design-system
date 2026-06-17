@@ -1,0 +1,104 @@
+/* =============================================================================
+   Spinner — CSS Module
+   All values are drawn exclusively from --ds-* custom properties.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Keyframe: continuous 360° rotation
+--------------------------------------------------------------------------- */
+@keyframes ds-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   Host element — inline-flex so the spinner sits naturally in text flow
+   and can be placed inside button labels, etc.
+--------------------------------------------------------------------------- */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* Animation */
+  animation: ds-spin 0.75s linear infinite;
+
+  /* ring is built with border — see SVG alternative note in Spinner.tsx */
+  border-style: solid;
+  border-radius: var(--ds-border-radius-full);
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 2s;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Sizes  — diameter & stroke width scale together
+--------------------------------------------------------------------------- */
+.sm {
+  width:  16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.md {
+  width:  24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.lg {
+  width:  40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   Color variants
+   Border pattern: three-quarter arc colored, one-quarter transparent.
+   border-color order: top right bottom left
+--------------------------------------------------------------------------- */
+
+/* primary — warm-black track, lighter warm-gray trail */
+.primary {
+  border-color:
+    var(--ds-color-primary-900)
+    var(--ds-color-primary-900)
+    var(--ds-color-primary-900)
+    transparent;
+}
+
+/* neutral — warm sand track, sunken-surface trail */
+.neutral {
+  border-color:
+    var(--ds-color-neutral-600)
+    var(--ds-color-neutral-600)
+    var(--ds-color-neutral-600)
+    transparent;
+}
+
+/* onDark — light warm track for placement on dark backgrounds */
+.onDark {
+  border-color:
+    var(--ds-color-primary-100)
+    var(--ds-color-primary-100)
+    var(--ds-color-primary-100)
+    transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Visually-hidden label helper (mirrors the standard .sr-only pattern)
+--------------------------------------------------------------------------- */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

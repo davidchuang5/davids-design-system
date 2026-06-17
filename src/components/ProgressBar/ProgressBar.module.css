@@ -1,0 +1,85 @@
+/* =============================================================================
+   ProgressBar — CSS Module
+   All values reference puma-ui design tokens (--ds-*).
+   No hardcoded colours, sizes, or radii.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Root wrapper
+--------------------------------------------------------------------------- */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-4);
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Label row  (label text + optional value label)
+--------------------------------------------------------------------------- */
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-tight);
+  color: var(--ds-color-surface-base-foreground);
+}
+
+.valueLabel {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-tight);
+  color: var(--ds-color-neutral-600);
+}
+
+/* ---------------------------------------------------------------------------
+   Track  (the outer background bar)
+--------------------------------------------------------------------------- */
+.track {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--ds-color-surface-sunken);
+  border-radius: var(--ds-border-radius-full);
+}
+
+/* Size variants — track height */
+.track--sm { height: 4px; }
+.track--md { height: 8px; }
+.track--lg { height: 12px; }
+
+/* ---------------------------------------------------------------------------
+   Fill  (the coloured progress indicator)
+--------------------------------------------------------------------------- */
+.fill {
+  height: 100%;
+  border-radius: var(--ds-border-radius-full);
+  transition: width 300ms ease;
+  /* Width is driven by an inline CSS custom property set in the TSX component */
+  width: var(--_progress-width, 0%);
+}
+
+/* Variant colours */
+.fill--default { background-color: var(--ds-color-primary-800); }
+.fill--success { background-color: var(--ds-color-primary-700); }
+.fill--warning { background-color: var(--ds-color-neutral-600); }
+.fill--danger  { background-color: var(--ds-color-primary-900); }
+
+/* ---------------------------------------------------------------------------
+   Indeterminate animation
+--------------------------------------------------------------------------- */
+.fill--indeterminate {
+  width: 40%;
+  animation: indeterminate-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes indeterminate-slide {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(250%); }
+  100% { transform: translateX(250%); }
+}

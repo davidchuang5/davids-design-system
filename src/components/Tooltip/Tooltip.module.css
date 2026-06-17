@@ -1,109 +1,174 @@
-.tooltipWrapper {
+/* =============================================================================
+   Tooltip — puma-ui design system
+   Uses only --ds- custom properties from variables.css
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Trigger wrapper
+   An inline-block wrapper around the consumer-supplied trigger element.
+   position:relative is the anchor for the absolutely-positioned tooltip.
+--------------------------------------------------------------------------- */
+.wrapper {
+  display: inline-block;
   position: relative;
-  display: inline-block;
 }
 
-.tooltipTrigger {
-  display: inline-block;
-  outline: none;
-}
-
-.tooltipContent {
+/* ---------------------------------------------------------------------------
+   Tooltip bubble
+--------------------------------------------------------------------------- */
+.tooltip {
   position: absolute;
-  z-index: var(--ds-z-index-tooltip);
+  z-index: 9000;
+
+  /* Visual */
   background-color: var(--ds-color-primary-800);
-  color: var(--ds-color-primary-800-foreground);
-  padding: var(--ds-spacing-2) var(--ds-spacing-3);
-  border-radius: var(--ds-border-radius-md);
-  font-size: var(--ds-font-size-sm);
+  color:            var(--ds-color-primary-800-foreground);
+  border-radius:    var(--ds-border-radius-md);
+
+  /* Typography */
+  font-size:   var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-regular);
-  line-height: var(--ds-line-height-normal);
-  white-space: nowrap;
-  box-shadow: var(--ds-shadow-lg);
-  animation: tooltipFadeIn var(--ds-duration-fast) var(--ds-easing-ease-out);
-  pointer-events: none;
-  max-width: 280px;
-  word-wrap: break-word;
+  line-height: var(--ds-line-height-snug);
+
+  /* Layout — default size (md) */
+  padding: var(--ds-spacing-8) var(--ds-spacing-12);
+  max-width: 240px;
   white-space: normal;
+  word-break: break-word;
+
+  /* Pointer events: tooltip itself should not steal mouse from trigger */
+  pointer-events: none;
+
+  /* Visibility / animation */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition:
+    opacity       120ms ease,
+    visibility    0ms   linear 120ms,
+    transform     120ms ease;
 }
 
-.tooltipArrow {
+/* Visible state — applied via JS */
+.tooltip[data-visible='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition:
+    opacity    150ms ease,
+    visibility 0ms   linear,
+    transform  150ms ease;
+}
+
+/* ---------------------------------------------------------------------------
+   Arrow
+--------------------------------------------------------------------------- */
+.arrow {
   position: absolute;
   width: 0;
   height: 0;
-  border-style: solid;
-  background-color: var(--ds-color-primary-800);
 }
 
-/* Placement: top */
+/* ---------------------------------------------------------------------------
+   Placement modifiers — positioning the bubble + arrow
+   The bubble is always positioned relative to .wrapper.
+   CSS custom property --ds-tooltip-offset is set inline via React.
+--------------------------------------------------------------------------- */
+
+/* ---- top ---- */
 .placement-top {
-  bottom: 100%;
+  bottom: calc(100% + var(--ds-tooltip-offset, var(--ds-spacing-8)));
   left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: var(--ds-spacing-2);
+  transform: translateX(-50%) scale(0.95);
+  transform-origin: bottom center;
 }
-
-.placement-top .tooltipArrow {
+.placement-top[data-visible='true'] {
+  transform: translateX(-50%) scale(1);
+}
+.placement-top .arrow {
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border-width: var(--ds-spacing-1) var(--ds-spacing-1) 0 var(--ds-spacing-1);
-  border-color: var(--ds-color-primary-800) transparent transparent transparent;
+  border-left:   5px solid transparent;
+  border-right:  5px solid transparent;
+  border-top:    5px solid var(--ds-color-primary-800);
 }
 
-/* Placement: bottom */
+/* ---- bottom ---- */
 .placement-bottom {
-  top: 100%;
+  top: calc(100% + var(--ds-tooltip-offset, var(--ds-spacing-8)));
   left: 50%;
-  transform: translateX(-50%);
-  margin-top: var(--ds-spacing-2);
+  transform: translateX(-50%) scale(0.95);
+  transform-origin: top center;
 }
-
-.placement-bottom .tooltipArrow {
+.placement-bottom[data-visible='true'] {
+  transform: translateX(-50%) scale(1);
+}
+.placement-bottom .arrow {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 0 var(--ds-spacing-1) var(--ds-spacing-1) var(--ds-spacing-1);
-  border-color: transparent transparent var(--ds-color-primary-800) transparent;
+  border-left:   5px solid transparent;
+  border-right:  5px solid transparent;
+  border-bottom: 5px solid var(--ds-color-primary-800);
 }
 
-/* Placement: left */
+/* ---- left ---- */
 .placement-left {
-  right: 100%;
+  right: calc(100% + var(--ds-tooltip-offset, var(--ds-spacing-8)));
   top: 50%;
-  transform: translateY(-50%);
-  margin-right: var(--ds-spacing-2);
+  transform: translateY(-50%) scale(0.95);
+  transform-origin: right center;
 }
-
-.placement-left .tooltipArrow {
+.placement-left[data-visible='true'] {
+  transform: translateY(-50%) scale(1);
+}
+.placement-left .arrow {
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
-  border-width: var(--ds-spacing-1) 0 var(--ds-spacing-1) var(--ds-spacing-1);
-  border-color: transparent transparent transparent var(--ds-color-primary-800);
+  border-top:    5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left:   5px solid var(--ds-color-primary-800);
 }
 
-/* Placement: right */
+/* ---- right ---- */
 .placement-right {
-  left: 100%;
+  left: calc(100% + var(--ds-tooltip-offset, var(--ds-spacing-8)));
   top: 50%;
-  transform: translateY(-50%);
-  margin-left: var(--ds-spacing-2);
+  transform: translateY(-50%) scale(0.95);
+  transform-origin: left center;
 }
-
-.placement-right .tooltipArrow {
+.placement-right[data-visible='true'] {
+  transform: translateY(-50%) scale(1);
+}
+.placement-right .arrow {
   right: 100%;
   top: 50%;
   transform: translateY(-50%);
-  border-width: var(--ds-spacing-1) var(--ds-spacing-1) var(--ds-spacing-1) 0;
-  border-color: transparent var(--ds-color-primary-800) transparent transparent;
+  border-top:    5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right:  5px solid var(--ds-color-primary-800);
 }
 
-@keyframes tooltipFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* ---------------------------------------------------------------------------
+   Size variants — override padding and font-size
+--------------------------------------------------------------------------- */
+.size-sm {
+  font-size: var(--ds-font-size-xs);
+  padding:   var(--ds-spacing-4) var(--ds-spacing-8);
+  max-width: 180px;
+}
+
+.size-md {
+  /* already the base, listed for explicitness */
+  font-size: var(--ds-font-size-sm);
+  padding:   var(--ds-spacing-8) var(--ds-spacing-12);
+  max-width: 240px;
+}
+
+.size-lg {
+  font-size: var(--ds-font-size-base);
+  padding:   var(--ds-spacing-12) var(--ds-spacing-16);
+  max-width: 320px;
 }

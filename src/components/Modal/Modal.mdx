@@ -1,151 +1,159 @@
-import { Modal } from './Modal'
-import { useState } from 'react'
-
 # Modal
 
 ## Overview
 
-The Modal component displays content in a dialog box that overlays the main page, pausing user interaction with the underlying content until the modal is dismissed. Use it for critical actions that require user confirmation, forms that demand focused attention, or alerts that need explicit acknowledgment.
+Modal is a dialog component that displays content in a floating panel above the page, with a backdrop that dims the background. It manages focus automatically, traps keyboard navigation, and closes on ESC key press or backdrop click by default. Use modals for critical user decisions, forms that require undivided attention, or alerts that demand acknowledgment before continuing.
 
 ## Usage
 
 ```jsx
-function BasicModal() {
+import { Modal } from '@enterprise-design-system/react'
+import { useState } from 'react'
+
+export function ModalExample() {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>Open Modal</button>
+      <button onClick={() => setOpen(true)}>
+        Open Modal
+      </button>
+
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Confirm Action"
-      >
-        Are you sure you want to proceed?
-      </Modal>
-    </>
-  )
-}
-```
-
-### With Footer Actions
-
-```jsx
-function ModalWithFooter() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)}>Delete Item</button>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Delete Confirmation"
+        header="Confirm Action"
         footer={
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
             <button onClick={() => setOpen(false)}>Cancel</button>
-            <button onClick={() => setOpen(false)}>Delete</button>
+            <button onClick={() => setOpen(false)}>Confirm</button>
           </div>
         }
       >
-        This action cannot be undone.
+        <p>Are you sure you want to proceed with this action?</p>
       </Modal>
     </>
   )
 }
 ```
 
-### Non-Dismissible Modal
+## Composition
+
+The Modal component has three main regions:
+
+- **Header** — Optional title bar with an auto-generated close button. When provided, the header text becomes the accessible label via `aria-labelledby`.
+- **Body** — Main content area passed as `children`.
+- **Footer** — Optional action buttons or additional controls below the body.
+
+## Sizes
+
+The `size` prop controls the modal width:
+
+| Size | Width |
+|------|-------|
+| `sm` | 384px |
+| `md` | 512px (default) |
+| `lg` | 640px |
 
 ```jsx
-function NonDismissibleModal() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)}>Open Modal</button>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Processing"
-        closeOnEscape={false}
-        closeOnOverlayClick={false}
-      >
-        Please wait while we process your request...
-      </Modal>
-    </>
-  )
-}
+<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  size="lg"
+  header="Large Modal"
+>
+  Content
+</Modal>
 ```
+
+## Focus Management
+
+The Modal automatically:
+
+1. **Captures focus** — When opened, focus moves to the first focusable element inside the dialog, or to the dialog itself if no focusable elements exist.
+2. **Traps focus** — Pressing Tab cycles through focusable elements inside the modal only. Shift+Tab at the first element wraps to the last.
+3. **Restores focus** — When closed, focus returns to the element that was active before the modal opened.
+
+## Closing Behavior
+
+By default, the Modal closes when:
+
+- The user presses **ESC**
+- The user clicks the **backdrop** (dimmed area)
+- The user clicks the built-in **close button** in the header
+
+Use `disableEscClose` or `disableBackdropClose` props to prevent unintended dismissals in critical flows (e.g., confirmation dialogs).
+
+```jsx
+<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  disableBackdropClose
+  disableEscClose
+  header="Confirm Deletion"
+>
+  <p>This action cannot be undone.</p>
+</Modal>
+```
+
+## Accessibility
+
+**ARIA Roles & Attributes:**
+
+- `role="dialog"` — Identifies the panel as a dialog container.
+- `aria-modal="true"` — Marks the dialog as modal, preventing interaction with the page below.
+- `aria-label` or `aria-labelledby` — Provides an accessible name. Use `aria-label` for icon-only headers; pass `header` to auto-wire `aria-labelledby`.
+- `aria-hidden="true"` — Applied to the backdrop element so it is not announced.
+
+**Keyboard Behavior:**
+
+- **ESC** — Closes the modal (unless `disableEscClose` is true).
+- **Tab / Shift+Tab** — Cycles focus within the modal; wraps at edges.
+
+**Screen Reader Notes:**
+
+- Always provide either a `header` or an explicit `aria-label` prop so screen reader users know the dialog's purpose.
+- The close button is automatically labeled with "Close modal".
+- Background scrolling is disabled while the modal is open.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `open` | `boolean` | — | Controls whether the modal is visible. |
-| `onClose` | `() => void` | — | Callback fired when the modal should close (user presses Escape, clicks overlay, or clicks close button). |
-| `title` | `string \| React.ReactNode` | `undefined` | Title displayed in the modal header. If omitted, no header is rendered. |
-| `children` | `React.ReactNode` | `undefined` | Main content of the modal. |
-| `footer` | `React.ReactNode` | `undefined` | Content displayed in the footer section, typically action buttons. |
-| `closeOnEscape` | `boolean` | `true` | Whether pressing the Escape key closes the modal. |
-| `closeOnOverlayClick` | `boolean` | `true` | Whether clicking the overlay backdrop closes the modal. |
+| `open` | `boolean` | — | Controls whether the modal is visible. The parent component is responsible for updating this state when `onClose` is called. |
+| `onClose` | `() => void` | — | Callback fired when the user attempts to close the modal via ESC, backdrop click, or the close button. The parent must use this to update the `open` prop. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Width preset for the dialog panel. |
+| `disableBackdropClose` | `boolean` | `false` | When true, clicking the backdrop will not close the modal. |
+| `disableEscClose` | `boolean` | `false` | When true, pressing ESC will not close the modal. |
+| `aria-label` | `string` | — | Accessible label for the dialog. Use when there is no `header`. Ignored if `header` is provided (which auto-wires `aria-labelledby`). |
+| `header` | `React.ReactNode` | — | Content rendered in the header bar. Automatically wired as the dialog's accessible label. |
+| `children` | `React.ReactNode` | — | Content rendered in the body region. |
+| `footer` | `React.ReactNode` | — | Content rendered in the footer region, typically containing action buttons. |
+| `className` | `string` | — | Additional CSS class names applied to the dialog panel. |
+| `style` | `React.CSSProperties` | — | Inline styles applied to the dialog panel. |
 
-## Accessibility
-
-- **Native Dialog**: The component uses the HTML `<dialog>` element for proper semantic structure and built-in accessibility features.
-- **Escape Key**: When `closeOnEscape` is true, users can press Escape to dismiss the modal, following standard UI patterns.
-- **Focus Management**: The dialog element automatically manages focus when opened and restores focus when closed.
-- **Close Button**: The close button includes `aria-label="Close modal"` for screen reader users.
-- **Icon Decoration**: The close icon uses `aria-hidden="true"` to prevent redundant announcements from assistive technologies.
-
-## Do's and Don'ts
+## Do / Don't
 
 ### Do
 
 ```jsx
-// Use modals for critical confirmations or focused tasks
-function DeleteConfirmation() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)}>Delete Account</button>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Delete Your Account?"
-        footer={
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => setOpen(false)}>Cancel</button>
-            <button onClick={() => setOpen(false)}>Permanently Delete</button>
-          </div>
-        }
-      >
-        This action cannot be reversed. All data will be lost.
-      </Modal>
-    </>
-  )
-}
+// Provide a header or aria-label so the dialog has an accessible name
+<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  header="Save Changes?"
+>
+  <p>Discard unsaved work?</p>
+  <button onClick={() => setOpen(false)}>Cancel</button>
+  <button onClick={handleSave}>Save</button>
+</Modal>
 ```
 
 ### Don't
 
 ```jsx
-// Avoid using modals for routine information or non-critical messages
-function BadModal() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)}>Show Info</button>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Welcome"
-      >
-        Thanks for visiting our site!
-      </Modal>
-    </>
-  )
-}
+// Missing both header and aria-label — screen readers cannot announce the modal's purpose
+<Modal open={open} onClose={() => setOpen(false)}>
+  <p>Discard unsaved work?</p>
+</Modal>
 ```

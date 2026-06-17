@@ -1,0 +1,203 @@
+/* =============================================================================
+   Banner — puma-ui design system
+   All values reference tokens from variables.css; no hardcoded primitives.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Base structure
+--------------------------------------------------------------------------- */
+.banner {
+  display:        grid;
+  /* col 1: icon  |  col 2: content  |  col 3: dismiss button */
+  grid-template-columns: auto 1fr auto;
+  align-items:    start;
+  gap:            var(--ds-spacing-12);
+
+  border-radius:  var(--ds-border-radius-lg);
+  border:         1px solid transparent;
+
+  font-size:      var(--ds-font-size-base);
+  line-height:    var(--ds-line-height-normal);
+  font-weight:    var(--ds-font-weight-regular);
+
+  position:       relative;
+  width:          100%;
+  box-sizing:     border-box;
+}
+
+/* ---------------------------------------------------------------------------
+   Sizes
+--------------------------------------------------------------------------- */
+.size-sm {
+  padding:   var(--ds-spacing-8) var(--ds-spacing-12);
+  font-size: var(--ds-font-size-sm);
+  gap:       var(--ds-spacing-8);
+}
+
+.size-md {
+  padding:   var(--ds-spacing-12) var(--ds-spacing-16);
+  font-size: var(--ds-font-size-base);
+  gap:       var(--ds-spacing-12);
+}
+
+.size-lg {
+  padding:   var(--ds-spacing-16) var(--ds-spacing-24);
+  font-size: var(--ds-font-size-lg);
+  gap:       var(--ds-spacing-16);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — info
+   Warm neutral tint; primary-800 border for subtle authority.
+--------------------------------------------------------------------------- */
+.variant-info {
+  background-color: var(--ds-color-neutral-100);
+  border-color:     var(--ds-color-primary-300);
+  color:            var(--ds-color-neutral-900);
+}
+
+.variant-info .icon {
+  color: var(--ds-color-primary-600);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — success
+   Slightly lighter neutral surface; primary-700 icon to signal completion.
+--------------------------------------------------------------------------- */
+.variant-success {
+  background-color: var(--ds-color-neutral-50);
+  border-color:     var(--ds-color-primary-400);
+  color:            var(--ds-color-neutral-900);
+}
+
+.variant-success .icon {
+  color: var(--ds-color-primary-700);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — warning
+   Warm sand surface; mid-range primary border for elevated attention.
+--------------------------------------------------------------------------- */
+.variant-warning {
+  background-color: var(--ds-color-neutral-200);
+  border-color:     var(--ds-color-primary-500);
+  color:            var(--ds-color-neutral-900);
+}
+
+.variant-warning .icon {
+  color: var(--ds-color-primary-700);
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — error
+   Darkest warm neutral surface; near-black border for critical urgency.
+--------------------------------------------------------------------------- */
+.variant-error {
+  background-color: var(--ds-color-neutral-300);
+  border-color:     var(--ds-color-primary-800);
+  color:            var(--ds-color-neutral-900);
+}
+
+.variant-error .icon {
+  color: var(--ds-color-primary-900);
+}
+
+/* ---------------------------------------------------------------------------
+   Icon slot
+--------------------------------------------------------------------------- */
+.icon {
+  display:     inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* Scale with the size variant via em so we never need separate overrides. */
+  font-size:   1.25em;
+  line-height: 1;
+  /* Align icon with the first line of text */
+  margin-top:  0.1em;
+}
+
+/* ---------------------------------------------------------------------------
+   Content area
+--------------------------------------------------------------------------- */
+.content {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--ds-spacing-4);
+  min-width:      0; /* allow text to wrap inside a constrained grid cell */
+}
+
+.title {
+  font-weight:  var(--ds-font-weight-semibold);
+  line-height:  var(--ds-line-height-tight);
+  font-size:    1em; /* inherits from .banner size cascade */
+  margin:       0;
+}
+
+.body {
+  margin:       0;
+  color:        inherit;
+  font-weight:  var(--ds-font-weight-regular);
+  line-height:  var(--ds-line-height-normal);
+}
+
+/* ---------------------------------------------------------------------------
+   Action slot
+--------------------------------------------------------------------------- */
+.action {
+  display:     flex;
+  align-items: center;
+  gap:         var(--ds-spacing-8);
+  margin-top:  var(--ds-spacing-8);
+  flex-wrap:   wrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Dismiss button
+--------------------------------------------------------------------------- */
+.dismiss {
+  display:          inline-flex;
+  align-items:      center;
+  justify-content:  center;
+  flex-shrink:      0;
+
+  /* Size — 24 × 24 touch target */
+  width:            var(--ds-spacing-24);
+  height:           var(--ds-spacing-24);
+
+  padding:          0;
+  border:           1px solid transparent;
+  border-radius:    var(--ds-border-radius-sm);
+  background:       transparent;
+  color:            inherit;
+  cursor:           pointer;
+  opacity:          0.65;
+
+  transition:       opacity 150ms ease, background-color 150ms ease,
+                    border-color 150ms ease;
+
+  /* Nudge flush with the top of the text baseline */
+  margin-top:       0.05em;
+}
+
+.dismiss:hover {
+  opacity:          1;
+  background-color: var(--ds-color-neutral-200);
+  border-color:     var(--ds-color-neutral-400);
+}
+
+.dismiss:focus-visible {
+  outline:          2px solid var(--ds-color-primary-700);
+  outline-offset:   2px;
+  opacity:          1;
+}
+
+.dismiss:active {
+  background-color: var(--ds-color-neutral-300);
+}
+
+/* ---------------------------------------------------------------------------
+   When there is no icon, collapse the first grid column so content is flush.
+--------------------------------------------------------------------------- */
+.no-icon {
+  grid-template-columns: 1fr auto;
+}

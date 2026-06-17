@@ -1,134 +1,132 @@
+import { Button } from './Button'
+import { ArrowRight, Search, Plus } from 'lucide-react'
+
 # Button
 
 ## Overview
 
-The Button component is a fundamental interactive element used to trigger actions or navigate the user interface. It supports multiple visual styles (primary, secondary, ghost, danger), sizes (small, medium, large), and states (loading, disabled) to accommodate different contexts and design needs. Use buttons for user-triggered actions like form submission, navigation, or destructive operations.
+The Button component is a reusable, accessible control for triggering actions or navigating within the application. It supports three visual variants (primary, secondary, ghost), three sizes (sm, md, lg), optional icon slots, and a loading state. All styling is driven by CSS custom properties, making it easy to theme across the design system.
+
+Use buttons for actions that change application state, submit forms, or trigger workflows. For navigation to a new page or external URL, use a link styled as a button instead.
 
 ## Usage
 
-### Basic Button
-
 ```jsx
-import { Button } from '@puma-ui/button'
-
-export default function Example() {
-  return (
-    <Button onClick={() => console.log('Clicked')}>
-      Click me
-    </Button>
-  )
-}
+<Button variant="primary" size="md">
+  Save Changes
+</Button>
 ```
 
 ### Variants
 
 ```jsx
-<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+<>
   <Button variant="primary">Primary</Button>
   <Button variant="secondary">Secondary</Button>
   <Button variant="ghost">Ghost</Button>
-  <Button variant="danger">Danger</Button>
-</div>
+</>
 ```
 
 ### Sizes
 
 ```jsx
-<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+<>
   <Button size="sm">Small</Button>
   <Button size="md">Medium</Button>
   <Button size="lg">Large</Button>
-</div>
+</>
+```
+
+### With Icons
+
+```jsx
+<>
+  <Button leadingIcon={<Search size={16} />}>
+    Search
+  </Button>
+  <Button trailingIcon={<ArrowRight size={16} />}>
+    Next Step
+  </Button>
+  <Button leadingIcon={<Plus size={16} />}>
+    Add Item
+  </Button>
+</>
 ```
 
 ### Loading State
 
 ```jsx
-<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-  <Button loading>Loading...</Button>
-  <Button variant="secondary" loading>Saving</Button>
-</div>
+<Button variant="primary" loading>
+  Saving...
+</Button>
 ```
 
 ### Disabled State
 
 ```jsx
-<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-  <Button disabled>Disabled</Button>
-  <Button variant="danger" disabled>Cannot delete</Button>
-</div>
-```
-
-### Combined States
-
-```jsx
-<div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-  <Button variant="primary" size="lg" loading>
-    Submitting form
-  </Button>
-  <Button variant="ghost" size="sm" disabled>
-    Archived
-  </Button>
-</div>
+<Button disabled>
+  Disabled
+</Button>
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Visual style variant. Primary for main actions, secondary for supporting actions, ghost for subtle actions, danger for destructive operations. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size. Small for compact layouts, medium for standard use, large for prominent actions. |
-| `loading` | `boolean` | `false` | Loading state indicator. Automatically disables the button, displays a spinner, and sets `aria-busy="true"`. |
-| `disabled` | `boolean` | `false` | Disabled state. Prevents user interaction and applies disabled styling. |
-| `children` | `React.ReactNode` | — | Button label or content. |
-| `className` | `string` | — | Additional CSS class names for custom styling. |
-| `...` | `React.ButtonHTMLAttributes<HTMLButtonElement>` | — | All standard HTML button attributes (e.g., `onClick`, `type`, `form`, `name`). |
+| variant | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | Visual style of the button. |
+| size | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the button — affects padding and font size. |
+| loading | `boolean` | `false` | When true, renders a spinner and sets aria-busy. The button remains focusable but click handlers are blocked. |
+| disabled | `boolean` | `false` | When true, the button is visually and functionally disabled. |
+| leadingIcon | `React.ReactNode` | — | Icon rendered to the left of the label. Marked as decorative with aria-hidden. |
+| trailingIcon | `React.ReactNode` | — | Icon rendered to the right of the label. Marked as decorative with aria-hidden. |
+| type | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type attribute. Use 'submit' within a form context. |
+| onClick | `(event: React.MouseEvent<HTMLButtonElement>) => void` | — | Click handler. Blocked when button is disabled or loading. |
+| className | `string` | — | Additional CSS class names. |
+| All HTML button attributes | — | — | Supports ref, aria-label, title, data-* attributes, etc. |
 
 ## Accessibility
 
-The Button component includes built-in accessibility features:
+- **Button type**: Defaults to `type="button"`. Use `type="submit"` on forms.
+- **Disabled state**: When `disabled` is true, the HTML `disabled` attribute is set, preventing keyboard and pointer interaction.
+- **Loading state**: When `loading` is true, `aria-busy="true"` is set and the button remains focusable. Click handlers are prevented via JavaScript. Icon spinners are marked `aria-hidden="true"`.
+- **Icon decoration**: Both `leadingIcon` and `trailingIcon` are wrapped in `aria-hidden="true"` spans, so screen reader users only hear the button label.
+- **Keyboard behavior**: All buttons receive focus in tab order. Activate with Enter or Space. When loading, the button holds focus but prevents action.
+- **Focus management**: Use ref forwarding to programmatically manage focus after an action completes.
 
-- **Focus Management:** Buttons are keyboard accessible by default. The browser handles focus-visible outline styling to indicate focus state for keyboard navigation.
-- **Disabled State:** When disabled, the button automatically receives `aria-disabled="true"` to announce its disabled state to assistive technologies.
-- **Loading State:** When loading, the button receives `aria-busy="true"` to announce the busy state. The loading spinner is marked as `aria-hidden="true"` since the aria-busy attribute conveys the loading state.
-- **Button Role:** The component uses the native `<button>` element, which has an implicit button role and is recognized by all assistive technologies.
-- **Keyboard Navigation:** Buttons respond to Enter and Space key presses by default through native HTML button behavior.
-- **Screen Reader Announcements:** Button text is automatically announced. When loading, screen readers announce the button as busy, and when disabled, they announce it as disabled.
+## When to use Button vs. Link
+
+Use a **Button** when:
+- The interaction changes application state (e.g., save, delete, create)
+- The interaction submits a form
+- The interaction opens a modal or overlay
+- The interaction triggers a background process (e.g., upload, generate)
+
+Use a **Link** (styled as a button) when:
+- The interaction navigates to a different page or route
+- The interaction opens a new window or external URL
+- Users should be able to open the destination in a new tab via right-click
 
 ## Do / Don't
 
 ### Do
 
 ```jsx
-// Correct: Clear label text that describes the action
-<Button variant="primary" onClick={handleSubmit}>
-  Submit Form
-</Button>
-
-// Correct: Use variants appropriately
-<Button variant="danger" onClick={handleDelete}>
-  Delete Account
-</Button>
-
-// Correct: Indicate loading state during async operations
-<Button loading>
-  Saving changes
-</Button>
+<form>
+  <input type="text" placeholder="Enter name" />
+  <Button type="submit" variant="primary">
+    Submit Form
+  </Button>
+</form>
 ```
+
+Buttons should have clear, action-oriented labels and appropriate HTML type for their context.
 
 ### Don't
 
 ```jsx
-// Incorrect: Vague or missing button text
-<Button>Click</Button>
-
-// Incorrect: Using primary for minor actions
-<Button variant="primary" onClick={handleCancel}>
-  Cancel
-</Button>
-
-// Incorrect: Disabling button without feedback
-<Button disabled>
-  Submit
+<Button onClick={() => navigate('/dashboard')}>
+  Go to Dashboard
 </Button>
 ```
+
+Don't use Button for navigation. Use a Link component instead, so users can right-click, open in new tab, and search engines can crawl the navigation.

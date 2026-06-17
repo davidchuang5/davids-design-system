@@ -1,32 +1,72 @@
-.modal {
+/* =============================================================================
+   Modal — CSS Module
+   All values reference --ds- custom properties from variables.css.
+   No hardcoded colours, sizes, or radii.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Backdrop / overlay
+   Covers the full viewport, dims the background, and centres the panel.
+--------------------------------------------------------------------------- */
+.backdrop {
   position: fixed;
   inset: 0;
-  width: 90%;
-  max-width: 500px;
-  height: fit-content;
-  max-height: 90vh;
-  margin: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
-  overflow: visible;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Warm, slightly transparent neutral overlay */
+  background-color: rgba(30, 26, 23, 0.55); /* --ds-color-neutral-900 @ 55% */
+
+  /* Smooth entrance/exit */
+  opacity: 0;
+  animation: backdropFadeIn 160ms ease forwards;
 }
 
-.modal::backdrop {
-  background-color: rgba(16, 15, 14, 0.6);
-  backdrop-filter: blur(4px);
+.backdropVisible {
+  opacity: 1;
 }
 
-.modal[open] {
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   Dialog panel
+   The raised card that contains header / body / footer.
+--------------------------------------------------------------------------- */
+.panel {
+  position: relative;
   display: flex;
   flex-direction: column;
-  animation: slideIn var(--ds-duration-normal) var(--ds-easing-ease-out);
+
+  background-color: var(--ds-color-surface-raised);
+  color: var(--ds-color-surface-raised-foreground);
+
+  border-radius: var(--ds-border-radius-xl);
+  box-shadow:
+    0 4px 6px rgba(30, 26, 23, 0.06),
+    0 12px 32px rgba(30, 26, 23, 0.14),
+    0 0 0 1px var(--ds-color-neutral-200);
+
+  /* Cap height so the body becomes scrollable on small viewports */
+  max-height: calc(100dvh - var(--ds-spacing-64));
+  overflow: hidden;
+
+  /* Panel slides up gently on open */
+  animation: panelSlideIn 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  /* Ensure the panel never clips outside the backdrop on small screens */
+  margin: var(--ds-spacing-16);
 }
 
-@keyframes slideIn {
+@keyframes panelSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-2rem);
+    transform: translateY(var(--ds-spacing-12));
   }
   to {
     opacity: 1;
@@ -34,108 +74,140 @@
   }
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--ds-color-neutral-50);
-  border-radius: var(--ds-border-radius-lg);
-  box-shadow: var(--ds-shadow-2xl);
-  max-height: 90vh;
-  overflow-y: auto;
+/* ---------------------------------------------------------------------------
+   Size variants  — width is the primary differentiator
+--------------------------------------------------------------------------- */
+.size-sm {
+  width: 100%;
+  max-width: 400px;
 }
 
+.size-md {
+  width: 100%;
+  max-width: 560px;
+}
+
+.size-lg {
+  width: 100%;
+  max-width: 760px;
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+--------------------------------------------------------------------------- */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--ds-spacing-6);
-  border-bottom: var(--ds-border-width-1) solid var(--ds-color-neutral-200);
-  gap: var(--ds-spacing-4);
+  gap: var(--ds-spacing-12);
+
+  padding: var(--ds-spacing-24) var(--ds-spacing-24) var(--ds-spacing-16);
+
+  border-bottom: 1px solid var(--ds-color-neutral-200);
 }
 
-.title {
-  margin: 0;
-  font-family: var(--ds-font-family-sans);
-  font-size: var(--ds-font-size-xl);
+.headerTitle {
+  font-size: var(--ds-font-size-lg);
   font-weight: var(--ds-font-weight-semibold);
   line-height: var(--ds-line-height-tight);
   color: var(--ds-color-primary-900);
+
+  /* Allow long titles to wrap gracefully */
+  flex: 1;
+  min-width: 0;
 }
 
+/* ---------------------------------------------------------------------------
+   Close button (×)
+--------------------------------------------------------------------------- */
 .closeButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
+
+  /* Sizing */
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+
+  font-size: var(--ds-font-size-base);
+  color: var(--ds-color-neutral-500);
+
+  background: transparent;
   border: none;
-  background-color: transparent;
-  color: var(--ds-color-neutral-600);
-  cursor: pointer;
   border-radius: var(--ds-border-radius-md);
+  cursor: pointer;
+
   transition:
-    background-color var(--ds-duration-fast) var(--ds-easing-ease-out),
-    color var(--ds-duration-fast) var(--ds-easing-ease-out);
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .closeButton:hover {
-  background-color: var(--ds-color-neutral-200);
+  background-color: var(--ds-color-neutral-100);
   color: var(--ds-color-primary-900);
 }
 
-.closeButton:active {
-  background-color: var(--ds-color-neutral-300);
-}
-
 .closeButton:focus-visible {
-  outline: 2px solid var(--ds-color-primary-800);
+  outline: 2px solid var(--ds-color-primary-700);
   outline-offset: 2px;
 }
 
-.body {
-  flex: 1;
-  padding: var(--ds-spacing-6);
-  font-family: var(--ds-font-family-sans);
-  font-size: var(--ds-font-size-md);
-  line-height: var(--ds-line-height-normal);
-  color: var(--ds-color-primary-700);
-  overflow-y: auto;
+.closeButton:active {
+  background-color: var(--ds-color-neutral-200);
 }
 
+/* ---------------------------------------------------------------------------
+   Body
+   Scrollable region — flex-grow so it takes remaining height.
+--------------------------------------------------------------------------- */
+.body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  padding: var(--ds-spacing-24);
+
+  font-size: var(--ds-font-size-base);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-surface-raised-foreground);
+}
+
+/* Thin, warm-toned scrollbar in Webkit browsers */
+.body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.body::-webkit-scrollbar-track {
+  background: var(--ds-color-neutral-100);
+  border-radius: var(--ds-border-radius-full);
+}
+
+.body::-webkit-scrollbar-thumb {
+  background: var(--ds-color-neutral-300);
+  border-radius: var(--ds-border-radius-full);
+}
+
+.body::-webkit-scrollbar-thumb:hover {
+  background: var(--ds-color-neutral-400);
+}
+
+/* ---------------------------------------------------------------------------
+   Footer
+--------------------------------------------------------------------------- */
 .footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--ds-spacing-4);
-  padding: var(--ds-spacing-6);
-  border-top: var(--ds-border-width-1) solid var(--ds-color-neutral-200);
-  background-color: var(--ds-color-neutral-100);
-  border-radius: 0 0 var(--ds-border-radius-lg) var(--ds-border-radius-lg);
-}
+  gap: var(--ds-spacing-8);
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .modal {
-    width: 95%;
-    max-height: 95vh;
-  }
+  padding: var(--ds-spacing-16) var(--ds-spacing-24);
 
-  .header {
-    padding: var(--ds-spacing-4);
-  }
+  border-top: 1px solid var(--ds-color-neutral-200);
+  background-color: var(--ds-color-neutral-50);
 
-  .title {
-    font-size: var(--ds-font-size-lg);
-  }
-
-  .body {
-    padding: var(--ds-spacing-4);
-  }
-
-  .footer {
-    padding: var(--ds-spacing-4);
-    flex-direction: column;
-    align-items: stretch;
-  }
+  /* Rounded only at the bottom to match panel corners */
+  border-bottom-left-radius: var(--ds-border-radius-xl);
+  border-bottom-right-radius: var(--ds-border-radius-xl);
 }

@@ -1,191 +1,202 @@
-import { Dropdown } from './Dropdown'
+import { Dropdown } from './index'
 
 # Dropdown
 
 ## Overview
 
-The Dropdown component is a select menu that displays a list of options in a popover triggered by a button. Use it when you need to let users choose one value from a list of options without taking up vertical space on the page. The component handles keyboard navigation, focus management, and click-outside closing automatically.
+Dropdown is a menu component that displays a list of selectable options when triggered. Use it to let users choose from a set of items in a compact, space-saving interface. The component supports single selection, custom triggers, item icons, visual variants, and multiple placement options. It handles keyboard navigation, focus management, and click-outside behavior automatically.
 
 ## Usage
 
 ```jsx
-import { Dropdown } from '@puma-ui/Dropdown'
+import { Dropdown } from '@enterprise/design-system'
 
 const items = [
-  { id: '1', label: 'Option 1' },
-  { id: '2', label: 'Option 2' },
-  { id: '3', label: 'Option 3' },
+  { id: '1', label: 'Profile' },
+  { id: '2', label: 'Settings' },
+  { id: '3', label: 'Logout' },
 ]
 
 export function DropdownExample() {
-  const [value, setValue] = useState(null)
+  const [selectedId, setSelectedId] = React.useState('1')
 
   return (
     <Dropdown
+      label="Choose an option"
       items={items}
-      value={value}
-      onChange={setValue}
-      triggerLabel="Choose an option"
+      selectedId={selectedId}
+      onChange={(item) => setSelectedId(item.id)}
     />
   )
 }
 ```
 
-## Props
+## Item Structure
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `DropdownItem[]` | Required | Array of menu items with `id`, `label`, and optional `disabled` properties |
-| `value` | `string` | `undefined` | The id of the currently selected item |
-| `onChange` | `(itemId: string) => void` | `undefined` | Callback fired when a user selects an item |
-| `triggerLabel` | `string` | Required | Text displayed on the trigger button; replaced by selected item label when a value is set |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant of the dropdown trigger button |
-| `disabled` | `boolean` | `false` | Disables the dropdown trigger and prevents opening |
-
-### DropdownItem Shape
+Each item in the `items` array follows the `DropdownItem` interface:
 
 | Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `id` | `string` | Yes | Unique identifier for the item; passed to `onChange` callback |
-| `label` | `string` | Yes | Display text for the menu item |
-| `disabled` | `boolean` | No | Disables the item so it cannot be selected; disabled items are skipped in keyboard navigation |
+| --- | --- | --- | --- |
+| `id` | string | Yes | Unique identifier for the item |
+| `label` | string | Yes | Display text shown in the menu |
+| `icon` | React.ReactNode | No | Optional icon rendered before the label |
+| `disabled` | boolean | No | When true, item is shown but cannot be selected |
+| `divider` | boolean | No | When true, renders as a visual separator (non-interactive) |
 
-## Examples
+### Example with icons and dividers
 
-### Basic Dropdown
+```jsx
+const items = [
+  { id: 'edit', label: 'Edit', icon: <EditIcon /> },
+  { id: 'copy', label: 'Copy', icon: <CopyIcon /> },
+  { id: 'divider1', divider: true },
+  { id: 'delete', label: 'Delete', icon: <TrashIcon /> },
+  { id: 'disabled', label: 'Archive', disabled: true },
+]
+
+<Dropdown label="Actions" items={items} onChange={handleSelect} />
+```
+
+## Placement
+
+The `placement` prop controls where the menu opens relative to the trigger. Four options are available:
+
+```jsx
+// Opens below the trigger, aligned to the left edge
+<Dropdown placement="bottom-start" items={items} label="Menu" />
+
+// Opens below the trigger, aligned to the right edge
+<Dropdown placement="bottom-end" items={items} label="Menu" />
+
+// Opens above the trigger, aligned to the left edge
+<Dropdown placement="top-start" items={items} label="Menu" />
+
+// Opens above the trigger, aligned to the right edge
+<Dropdown placement="top-end" items={items} label="Menu" />
+```
+
+## Controlled vs Uncontrolled
+
+The Dropdown supports both controlled and uncontrolled patterns.
+
+### Uncontrolled (default)
+
+The component manages selection and open state internally. Use for simpler use cases:
 
 ```jsx
 <Dropdown
-  items={[
-    { id: 'apple', label: 'Apple' },
-    { id: 'banana', label: 'Banana' },
-    { id: 'orange', label: 'Orange' },
-  ]}
-  triggerLabel="Pick a fruit"
-  onChange={(id) => console.log(id)}
+  label="Select"
+  items={items}
+  defaultSelectedId="1"
+  defaultOpen={false}
+  onChange={(item) => console.log('Selected:', item)}
 />
 ```
 
-### With Selected Value
+### Controlled
+
+Provide `selectedId`, `open`, `onChange`, and `onOpenChange` to manage state externally:
 
 ```jsx
-const [selected, setSelected] = useState('banana')
+const [selectedId, setSelectedId] = React.useState('1')
+const [isOpen, setIsOpen] = React.useState(false)
 
 <Dropdown
-  items={[
-    { id: 'apple', label: 'Apple' },
-    { id: 'banana', label: 'Banana' },
-    { id: 'orange', label: 'Orange' },
-  ]}
-  value={selected}
-  triggerLabel="Pick a fruit"
-  onChange={setSelected}
+  label="Select"
+  items={items}
+  selectedId={selectedId}
+  onChange={(item) => setSelectedId(item.id)}
+  open={isOpen}
+  onOpenChange={setIsOpen}
 />
 ```
 
-### Different Sizes
+## Keyboard Interactions
 
-```jsx
-<Dropdown
-  items={[...]}
-  size="sm"
-  triggerLabel="Small"
-  onChange={(id) => console.log(id)}
-/>
+| Key | Context | Behavior |
+| --- | --- | --- |
+| **Enter** | Trigger focused | Opens menu, focus moves to first item |
+| **Space** | Trigger focused | Opens menu, focus moves to first item |
+| **ArrowDown** | Trigger focused | Opens menu, focus moves to first item |
+| **ArrowUp** | Trigger focused | Opens menu, focus moves to last item |
+| **Escape** | Menu open | Closes menu, focus returns to trigger |
+| **ArrowDown** | Item focused | Moves focus to next navigable item |
+| **ArrowUp** | Item focused | Moves focus to previous navigable item |
+| **Home** | Item focused | Moves focus to first navigable item |
+| **End** | Item focused | Moves focus to last navigable item |
+| **Enter** | Item focused | Selects item, closes menu, focus returns to trigger |
+| **Space** | Item focused | Selects item, closes menu, focus returns to trigger |
+| **Tab** | Menu open | Closes menu, focus returns to trigger |
 
-<Dropdown
-  items={[...]}
-  size="md"
-  triggerLabel="Medium"
-  onChange={(id) => console.log(id)}
-/>
-
-<Dropdown
-  items={[...]}
-  size="lg"
-  triggerLabel="Large"
-  onChange={(id) => console.log(id)}
-/>
-```
-
-### With Disabled Items
-
-```jsx
-<Dropdown
-  items={[
-    { id: '1', label: 'Available option' },
-    { id: '2', label: 'Unavailable option', disabled: true },
-    { id: '3', label: 'Another available option' },
-  ]}
-  triggerLabel="Choose"
-  onChange={(id) => console.log(id)}
-/>
-```
-
-### Disabled Dropdown
-
-```jsx
-<Dropdown
-  items={[...]}
-  disabled={true}
-  triggerLabel="Disabled"
-  onChange={(id) => console.log(id)}
-/>
-```
+Disabled and divider items are skipped during keyboard navigation.
 
 ## Accessibility
 
-### Keyboard Navigation
+- **ARIA roles**: The trigger uses `aria-haspopup="listbox"` and `aria-expanded` to announce state. The menu has `role="listbox"` with items as `role="option"`.
+- **Focus management**: Focus is automatically moved to the trigger after selection and when closing the menu.
+- **Screen reader announcements**: Selected items display a checkmark and are marked with `aria-selected="true"`. Disabled items are marked with `aria-disabled="true"`.
+- **Labeling**: The menu is labeled via `aria-labelledby` pointing to the trigger. Override with `menuLabel` if needed.
+- **Visual indicators**: Dividers use `role="separator"` and `aria-hidden="true"` to hide from screen readers.
 
-- **Enter or Space**: Opens the menu when focused on the trigger button; selects the highlighted item when the menu is open
-- **Arrow Down**: Opens the menu when focused on the trigger button (if closed); moves highlight to the next enabled item in the menu
-- **Arrow Up**: Moves highlight to the previous enabled item in the menu; wraps to the last item at the top
-- **Escape**: Closes the menu and returns focus to the trigger button
-- Disabled items are skipped during keyboard navigation
+## Props
 
-### ARIA Attributes
-
-- The trigger button has `aria-haspopup="listbox"` to indicate it controls a listbox menu
-- The trigger button has `aria-expanded` that reflects the open/closed state of the menu
-- The menu element has `role="listbox"`
-- Each menu item has `role="option"` and `aria-selected` reflecting its selection state
-- The trigger button has `aria-label` combining the trigger label and "dropdown menu"
-
-### Screen Reader Notes
-
-- Screen readers announce the trigger button's state, including whether the menu is expanded
-- When an item is selected, the trigger button label updates to reflect the selection
-- Disabled items are announced as unavailable and cannot be selected
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | Required | Trigger button text (used when no custom trigger provided) |
+| `items` | DropdownItem[] | Required | Array of menu items to display |
+| `selectedId` | string | undefined | Controlled selected item id |
+| `defaultSelectedId` | string | undefined | Default selected item id (uncontrolled) |
+| `onChange` | (item: DropdownItem) => void | undefined | Callback fired when an item is selected |
+| `open` | boolean | undefined | Controlled open state |
+| `defaultOpen` | boolean | false | Default open state (uncontrolled) |
+| `onOpenChange` | (open: boolean) => void | undefined | Callback fired when open state changes |
+| `size` | 'sm' \| 'md' \| 'lg' | 'md' | Visual size of trigger and items |
+| `variant` | 'default' \| 'outline' \| 'ghost' | 'default' | Visual style of the trigger button |
+| `placement` | 'bottom-start' \| 'bottom-end' \| 'top-start' \| 'top-end' | 'bottom-start' | Menu placement relative to trigger |
+| `disabled` | boolean | false | Disables the entire dropdown |
+| `trigger` | React.ReactElement | undefined | Custom trigger element (receives ARIA props via clone) |
+| `menuLabel` | string | undefined | Accessible label for the listbox (defaults to `label`) |
+| `className` | string | undefined | Additional CSS class for the root container |
+| `...divProps` | HTMLAttributes<HTMLDivElement> | | Standard HTML div attributes |
 
 ## Do / Don't
 
 ### Do
 
 ```jsx
-// Good: Use a clear, concise trigger label
+// Provide meaningful labels and use clear item text
 <Dropdown
-  items={items}
-  triggerLabel="Select a category"
-  onChange={handleChange}
+  label="Export format"
+  items={[
+    { id: 'csv', label: 'CSV' },
+    { id: 'json', label: 'JSON' },
+    { id: 'pdf', label: 'PDF' },
+  ]}
+  onChange={(item) => exportAs(item.id)}
 />
-
-// Good: Provide meaningful item labels
-const items = [
-  { id: 'electronics', label: 'Electronics' },
-  { id: 'clothing', label: 'Clothing' },
-  { id: 'books', label: 'Books' },
-]
 ```
 
 ### Don't
 
 ```jsx
-// Bad: Omitting triggerLabel makes the purpose unclear
-<Dropdown items={items} onChange={handleChange} />
+// Don't use vague labels or hide important context
+<Dropdown
+  label="Choose"
+  items={[
+    { id: '1', label: 'Option 1' },
+    { id: '2', label: 'Option 2' },
+  ]}
+/>
 
-// Bad: Using unclear or generic item labels
-const items = [
-  { id: '1', label: 'Option 1' },
-  { id: '2', label: 'Option 2' },
-]
+// Don't render interactive elements inside items (use label and icon only)
+<Dropdown
+  label="Menu"
+  items={[
+    {
+      id: 'action',
+      label: 'Action',
+      icon: <button>Click me</button>, // Don't do this
+    },
+  ]}
+/>
 ```

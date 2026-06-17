@@ -1,0 +1,210 @@
+/* =============================================================================
+   Card — CSS Module
+   All values reference --ds- custom properties from variables.css.
+   No hardcoded color, spacing, or radius values are used.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Base card shell
+   --------------------------------------------------------------------------- */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ds-color-surface-raised);
+  color: var(--ds-color-surface-raised-foreground);
+  border: 1px solid var(--ds-color-neutral-200);
+  border-radius: var(--ds-border-radius-xl);
+  overflow: hidden;
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Elevation variants
+   --------------------------------------------------------------------------- */
+.elevation-flat {
+  box-shadow: none;
+}
+
+.elevation-raised {
+  box-shadow:
+    0 1px 2px 0 rgba(16, 15, 13, 0.06),
+    0 2px 6px 0 rgba(16, 15, 13, 0.08);
+}
+
+.elevation-floating {
+  box-shadow:
+    0 4px 8px 0  rgba(16, 15, 13, 0.08),
+    0 12px 24px 0 rgba(16, 15, 13, 0.12);
+}
+
+/* ---------------------------------------------------------------------------
+   Hoverable — subtle lift on hover, no action implied
+   --------------------------------------------------------------------------- */
+.hoverable:hover {
+  border-color: var(--ds-color-neutral-300);
+  box-shadow:
+    0 4px 10px 0 rgba(16, 15, 13, 0.10),
+    0 16px 32px 0 rgba(16, 15, 13, 0.10);
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------------------
+   Clickable — full interactive state (hover + focus + active)
+   --------------------------------------------------------------------------- */
+.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.clickable:hover {
+  border-color: var(--ds-color-neutral-300);
+  box-shadow:
+    0 4px 10px 0 rgba(16, 15, 13, 0.10),
+    0 16px 32px 0 rgba(16, 15, 13, 0.10);
+  transform: translateY(-2px);
+}
+
+.clickable:active {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 2px 0 rgba(16, 15, 13, 0.06),
+    0 2px 6px 0 rgba(16, 15, 13, 0.08);
+  background-color: var(--ds-color-neutral-50);
+}
+
+.clickable:focus-visible {
+  outline: 2px solid var(--ds-color-primary-900);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+   Card Header
+   --------------------------------------------------------------------------- */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-4);
+  border-bottom: 1px solid var(--ds-color-neutral-200);
+}
+
+/* header size variants */
+.header-sm {
+  padding: var(--ds-spacing-12) var(--ds-spacing-16);
+}
+
+.header-md {
+  padding: var(--ds-spacing-16) var(--ds-spacing-24);
+}
+
+.header-lg {
+  padding: var(--ds-spacing-24) var(--ds-spacing-32);
+}
+
+/* header typography */
+.header :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-tight);
+  color: var(--ds-color-neutral-900);
+}
+
+.header-sm :where(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--ds-font-size-sm);
+}
+
+.header-md :where(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--ds-font-size-base);
+}
+
+.header-lg :where(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--ds-font-size-lg);
+}
+
+/* sub-title / description text inside header */
+.header p {
+  margin: 0;
+  color: var(--ds-color-neutral-500);
+  line-height: var(--ds-line-height-normal);
+  font-size: var(--ds-font-size-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   Card Body
+   --------------------------------------------------------------------------- */
+.body {
+  flex: 1 1 auto;
+  color: var(--ds-color-surface-raised-foreground);
+  font-size: var(--ds-font-size-base);
+  line-height: var(--ds-line-height-relaxed);
+}
+
+/* body size variants */
+.body-sm {
+  padding: var(--ds-spacing-12) var(--ds-spacing-16);
+}
+
+.body-md {
+  padding: var(--ds-spacing-16) var(--ds-spacing-24);
+}
+
+.body-lg {
+  padding: var(--ds-spacing-24) var(--ds-spacing-32);
+}
+
+/* ---------------------------------------------------------------------------
+   Card Footer
+   --------------------------------------------------------------------------- */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-spacing-8);
+  border-top: 1px solid var(--ds-color-neutral-200);
+}
+
+/* footer size variants */
+.footer-sm {
+  padding: var(--ds-spacing-8) var(--ds-spacing-16);
+}
+
+.footer-md {
+  padding: var(--ds-spacing-12) var(--ds-spacing-24);
+}
+
+.footer-lg {
+  padding: var(--ds-spacing-16) var(--ds-spacing-32);
+}
+
+/* ---------------------------------------------------------------------------
+   Padded variant — extra breathing room, removes internal section dividers so
+   the card reads as a unified padded block
+   --------------------------------------------------------------------------- */
+.padded .header,
+.padded .footer {
+  border-top: none;
+  border-bottom: none;
+}
+
+.padded.card {
+  border: 1px solid var(--ds-color-neutral-200);
+}
+
+.padded .header-sm,
+.padded .body-sm,
+.padded .footer-sm {
+  padding: var(--ds-spacing-16) var(--ds-spacing-24);
+}
+
+.padded .header-md,
+.padded .body-md,
+.padded .footer-md {
+  padding: var(--ds-spacing-24) var(--ds-spacing-32);
+}
+
+.padded .header-lg,
+.padded .body-lg,
+.padded .footer-lg {
+  padding: var(--ds-spacing-32) var(--ds-spacing-48);
+}

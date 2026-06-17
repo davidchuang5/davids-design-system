@@ -1,129 +1,151 @@
-# Tooltip
+---
+title: Tooltip
+description: A labelled bubble that appears on hover or focus to provide contextual information.
+---
 
 ## Overview
 
-Tooltips provide concise, contextual information about a UI element when a user hovers over it or focuses on it. Use tooltips to explain functionality, clarify icons, or provide additional details without cluttering the interface. Keep content short and avoid repeating visible text.
+The Tooltip component displays a small, contextual label when a user hovers over or focuses on a trigger element. It supports both controlled and uncontrolled modes, multiple placement options, configurable delays, and three size variants. Tooltips are essential for providing help text, expanded labels, or additional context without cluttering the interface.
 
 ## Usage
 
-### Basic Tooltip
-
 ```jsx
-import { Tooltip } from '@puma-ui/Tooltip'
+import { Tooltip } from '@ds/components'
 
 export default function TooltipExample() {
   return (
-    <Tooltip content="Save your work">
+    <Tooltip content="Save your work" placement="top">
       <button>Save</button>
     </Tooltip>
   )
 }
 ```
 
-### Placement Variants
+### Controlled Tooltip
+
+For managing tooltip state externally, use the `open` and `onOpenChange` props:
 
 ```jsx
-import { Tooltip } from '@puma-ui/Tooltip'
-
-export default function TooltipPlacements() {
-  return (
-    <div style={{ display: 'flex', gap: '2rem', padding: '4rem' }}>
-      <Tooltip content="Tooltip on top" placement="top">
-        <button>Top</button>
-      </Tooltip>
-
-      <Tooltip content="Tooltip on right" placement="right">
-        <button>Right</button>
-      </Tooltip>
-
-      <Tooltip content="Tooltip on bottom" placement="bottom">
-        <button>Bottom</button>
-      </Tooltip>
-
-      <Tooltip content="Tooltip on left" placement="left">
-        <button>Left</button>
-      </Tooltip>
-    </div>
-  )
-}
-```
-
-### Controlled Open State
-
-```jsx
-import { Tooltip } from '@puma-ui/Tooltip'
 import { useState } from 'react'
+import { Tooltip } from '@ds/components'
 
 export default function ControlledTooltip() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
   return (
     <div>
       <Tooltip
-        content="Click the button to toggle"
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
+        content="Click to open"
+        open={open}
+        onOpenChange={setOpen}
       >
-        <button onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? 'Hide' : 'Show'} Tooltip
-        </button>
+        <button>Hover me</button>
       </Tooltip>
+      <button onClick={() => setOpen(!open)}>Toggle</button>
     </div>
   )
 }
 ```
 
-### With Delay
+### Placement
+
+Control where the tooltip appears relative to the trigger:
 
 ```jsx
-import { Tooltip } from '@puma-ui/Tooltip'
+<Tooltip content="Help text" placement="right">
+  <button>Info</button>
+</Tooltip>
+```
 
-export default function TooltipWithDelay() {
-  return (
-    <Tooltip content="Appears after 300ms" showDelay={300}>
-      <button>Hover me</button>
-    </Tooltip>
-  )
-}
+### Delay
+
+Adjust how quickly the tooltip appears and disappears:
+
+```jsx
+<Tooltip
+  content="Appears after 500ms"
+  showDelay={500}
+  hideDelay={200}
+>
+  <button>Hover</button>
+</Tooltip>
+```
+
+### Size Variants
+
+Choose from three size options:
+
+```jsx
+<Tooltip content="Small tooltip" size="sm">
+  <button>Small</button>
+</Tooltip>
+
+<Tooltip content="Medium tooltip (default)" size="md">
+  <button>Medium</button>
+</Tooltip>
+
+<Tooltip content="Large tooltip with more text" size="lg">
+  <button>Large</button>
+</Tooltip>
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `content` | `React.ReactNode` | — | The text or element displayed in the tooltip. |
-| `placement` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Position of the tooltip relative to the trigger element. |
-| `isOpen` | `boolean` | — | Controls whether the tooltip is visible. Omit for uncontrolled behavior. |
-| `onOpenChange` | `(isOpen: boolean) => void` | — | Callback fired when the tooltip open state changes. |
-| `showDelay` | `number` | `0` | Delay in milliseconds before showing the tooltip on hover. |
-| `hideDelay` | `number` | `0` | Delay in milliseconds before hiding the tooltip on mouse leave. |
-| `children` | `React.ReactNode` | — | The trigger element that displays the tooltip on hover. |
+| `content` | `React.ReactNode` | — | The tooltip label or message. |
+| `children` | `React.ReactElement` | — | The trigger element. Must support focus and mouse events. |
+| `placement` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Position of the tooltip relative to the trigger. |
+| `open` | `boolean` | — | Controls the visible state (controlled mode). When omitted, state is managed internally. |
+| `defaultOpen` | `boolean` | `false` | Initial visible state for uncontrolled mode. |
+| `onOpenChange` | `(open: boolean) => void` | — | Callback fired when the tooltip requests a state change. |
+| `showDelay` | `number` | `300` | Milliseconds to wait before showing the tooltip. |
+| `hideDelay` | `number` | `100` | Milliseconds to wait before hiding the tooltip. |
+| `offset` | `number` | `8` | Gap in pixels between the tooltip and trigger element. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant affecting padding and font size. |
+| `disabled` | `boolean` | `false` | When true, the tooltip never appears. |
+| `id` | `string` | — | Custom id for the tooltip element. Auto-generated if omitted. |
 
 ## Accessibility
 
-The Tooltip component follows WAI-ARIA practices to ensure accessibility:
+**Keyboard Behavior**
+- Tooltip appears when the trigger receives focus.
+- Tooltip is dismissed by pressing Escape or when focus is lost.
+- The trigger element remains keyboard accessible.
 
-- **Role and Attributes**: The tooltip content has `role="tooltip"` and `aria-hidden="false"` when visible. The trigger element has `role="button"` and `aria-describedby="tooltip-content"` when the tooltip is open.
-- **Keyboard Support**: Press `Escape` to dismiss an open tooltip. The trigger is keyboard accessible with `tabIndex={0}`.
-- **Screen Readers**: Screen readers announce the tooltip content when it becomes visible through the `aria-describedby` relationship. The trigger relationship to the tooltip is programmatic.
-- **Focus Management**: Tooltips appear on both hover and keyboard focus, ensuring users navigating with assistive technology receive contextual information.
+**ARIA Pattern**
+- The trigger element receives `aria-describedby` pointing to the tooltip when visible.
+- The tooltip carries `role="tooltip"`.
+- The tooltip has `aria-hidden="true"` when hidden, removing it from the accessibility tree.
+
+**Screen Reader Behavior**
+- Screen readers announce the tooltip content as a description of the trigger element.
+- Hidden tooltips are not announced.
+- The arrow decoration has `aria-hidden="true"` to prevent unnecessary announcements.
 
 ## Do / Don't
 
 ### Do
 
 ```jsx
-// Good: Concise, helpful information
-<Tooltip content="Download file as PDF">
-  <button>Download</button>
+// Use Tooltip for supplementary help text
+<Tooltip content="Click to refresh the list" placement="right">
+  <button>Refresh</button>
 </Tooltip>
 ```
 
 ### Don't
 
 ```jsx
-// Bad: Repeating visible text or overly verbose
-<Tooltip content="Click this button to download your document as a portable document format file which can be opened on any device">
-  <button>Download</button>
+// Don't use Tooltip for critical information
+// Users on touch devices or without hover may miss it
+<Tooltip content="Password must be at least 8 characters" placement="top">
+  <input type="password" />
 </Tooltip>
+
+// Provide critical requirements in help text or error messages instead
+<div>
+  <input type="password" />
+  <p className="help-text">Password must be at least 8 characters</p>
+</div>
 ```

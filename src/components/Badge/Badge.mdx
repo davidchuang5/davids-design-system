@@ -1,131 +1,169 @@
-import { Badge } from './Badge'
+---
+title: Badge
+description: Inline status label for short, categorical information
+---
 
-## Badge
+# Badge
 
-### Overview
+## Overview
 
-The Badge component is a small, labeled element used to highlight, categorize, or draw attention to information. Badges typically appear inline or attached to other elements to provide supplementary context such as status, count, or category labels. Use badges for notifications, status indicators, labels, or to mark new/updated content.
+Badge is an inline status label used to call out short, categorical information such as counts, states, or labels. It supports multiple semantic variants and three sizes, all drawn from design tokens. Badges are commonly used to highlight status, add counts to navigation items, or label categorical data without taking up significant space.
 
-### Usage
+## When to Use
+
+- Display status information (success, warning, error, pending)
+- Show notification counts on buttons or navigation items
+- Label categories or tags
+- Highlight metrics or key data
+- Add visual emphasis to short text labels
+
+## Usage
 
 ```jsx
-import { Badge } from './Badge'
+import { Badge } from '@puma-ui/components'
 
-export default function BadgeExample() {
+export function BadgeExample() {
   return (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      <span>Orders:</span>
-      <Badge variant="primary" size="md">
-        12 new
-      </Badge>
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <Badge>New</Badge>
+      <Badge variant="success">Approved</Badge>
+      <Badge variant="warning">Pending</Badge>
+      <Badge variant="danger">Rejected</Badge>
+      <Badge variant="secondary">Draft</Badge>
+      <Badge variant="outline">Available</Badge>
     </div>
   )
 }
 ```
 
-### Props
+## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'default' \| 'primary' \| 'success' \| 'warning' \| 'danger'` | `'default'` | Visual style variant that indicates status or importance. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the badge. |
-| `className` | `string` | — | Additional CSS classes to apply to the badge. |
-| `children` | `React.ReactNode` | — | Content displayed inside the badge. |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline'` | `'default'` | Visual style of the badge. Choose a variant that matches the semantic meaning of the content. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the badge. Use `sm` for tight spaces, `lg` for prominent labels. |
+| `aria-label` | `string` | — | Accessible label override. Use when badge text alone is not descriptive enough for screen-reader users (e.g. a numeric count without context). |
+| `className` | `string` | — | Additional CSS class names for custom styling. |
+| `role` | `string` | `'status'` | ARIA role. Use `'status'` for dynamic updates, `'img'` for decorative badges with aria-label. |
+| `ref` | `Ref<HTMLSpanElement>` | — | Forward ref to the underlying span element. |
 
-The Badge component also extends all standard HTML span attributes.
+All standard HTML span attributes are also supported (e.g., `id`, `data-*`, event handlers).
 
-### Examples
+## Variant Examples
 
-#### Variants
+### Semantic Variants
+
+Use variants to communicate meaning:
 
 ```jsx
-export function BadgeVariants() {
-  return (
-    <div style={{ display: 'flex', gap: '8px' }}>
-      <Badge variant="default">Default</Badge>
-      <Badge variant="primary">Primary</Badge>
-      <Badge variant="success">Success</Badge>
-      <Badge variant="warning">Warning</Badge>
-      <Badge variant="danger">Danger</Badge>
-    </div>
-  )
-}
+<Badge variant="default">Default</Badge>
+<Badge variant="primary">Primary</Badge>
+<Badge variant="secondary">Secondary</Badge>
+<Badge variant="success">Success</Badge>
+<Badge variant="warning">Warning</Badge>
+<Badge variant="danger">Danger</Badge>
+<Badge variant="outline">Outline</Badge>
 ```
 
-#### Sizes
+**Variant Usage Guidelines:**
+- `default`: Neutral information with no special meaning
+- `primary`: Featured or highlighted information
+- `secondary`: Less prominent, supporting information
+- `success`: Positive state or completed action
+- `warning`: Caution or attention-required state
+- `danger`: Error, critical, or failed state
+- `outline`: Secondary style with border, lower visual weight
+
+## Size Examples
+
+### Small, Medium, Large
 
 ```jsx
-export function BadgeSizes() {
-  return (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      <Badge size="sm">Small</Badge>
-      <Badge size="md">Medium</Badge>
-      <Badge size="lg">Large</Badge>
-    </div>
-  )
-}
+<Badge size="sm">Small</Badge>
+<Badge size="md">Medium</Badge>
+<Badge size="lg">Large</Badge>
 ```
 
-#### Status Indicators
+**Size Usage Guidelines:**
+- `sm`: Use in dense layouts or when space is limited (e.g., table cells)
+- `md`: Default size for most use cases
+- `lg`: Use when badges are prominent focal points or in large cards
+
+### Size with Variants
 
 ```jsx
-export function BadgeStatus() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <div>
-        <span>Active Users:</span>
-        <Badge variant="success" size="sm">
-          42
-        </Badge>
-      </div>
-      <div>
-        <span>Failed Requests:</span>
-        <Badge variant="danger" size="sm">
-          3
-        </Badge>
-      </div>
-      <div>
-        <span>Pending Review:</span>
-        <Badge variant="warning" size="sm">
-          8
-        </Badge>
-      </div>
-    </div>
-  )
-}
+<Badge variant="success" size="sm">
+  3
+</Badge>
+<Badge variant="warning" size="md">
+  In Progress
+</Badge>
+<Badge variant="danger" size="lg">
+  Failed
+</Badge>
 ```
 
-### Accessibility
+## Accessibility
 
-- **Semantic HTML**: The Badge renders as a `<span>` element, which is semantically neutral. For status badges that convey important information, consider wrapping or complementing with appropriate ARIA attributes or label text.
-- **Color Contrast**: Each variant meets WCAG AA standards for color contrast against its background. Do not rely solely on color to convey information; use text labels as well.
-- **Screen Readers**: Badge content is read aloud by screen readers. Ensure the text content is clear and self-contained. For icon-only or purely visual badges, provide `aria-label` or `aria-describedby` to explain the badge's purpose.
-- **Focus Management**: The Badge component does not receive keyboard focus by default. If interactivity is needed, wrap it in a button or link element.
+### Screen Reader Behavior
 
-### Do / Don't
+- Badge renders as a `<span role="status">` by default, which announces dynamic content updates without moving focus
+- For decorative badges that represent a concept, use `role="img"` with an `aria-label`
 
-**Do:**
+### Keyboard Interaction
+
+- Badges themselves are not keyboard interactive—they are informational elements
+- If a badge wraps a clickable element, ensure the interactive element (button, link) handles keyboard navigation
+
+### ARIA Labels
+
+Always provide an `aria-label` when the visible text may be ambiguous or insufficient:
+
 ```jsx
-// Use badges to label or highlight short amounts of text
-<div>
-  <h3>
-    New Feature
-    <Badge variant="primary" size="sm">
-      Beta
-    </Badge>
-  </h3>
-  <p>This feature is currently in beta testing.</p>
-</div>
+// Good: Number badge with context
+<Badge aria-label="3 new messages">3</Badge>
+
+// Good: Decorative badge with aria-label
+<Badge role="img" aria-label="status: active" variant="success" />
+
+// Avoid: Ambiguous text without label
+<Badge>3</Badge>
 ```
 
-**Don't:**
+### Best Practices
+
+- Keep badge text short and meaningful
+- Use semantic variants to reinforce meaning (color alone is not sufficient for color-blind users)
+- Pair colors with text or icons when communicating critical information
+- Test with screen readers to ensure context is clear
+
+## Do / Don't
+
+### Do
+
 ```jsx
-// Don't use badges for long content or as interactive elements
-<Badge>
-  This is a very long description that should be in a separate component
-  because badges are meant for short, scannable labels only.
+// Correct: Clear label with semantic variant
+<Badge variant="success" aria-label="2 items approved">
+  2
 </Badge>
 
-// Don't rely only on color to convey meaning
-<Badge variant="danger">12</Badge> {/* Unclear what the number represents */}
+// Correct: Using variant to reinforce meaning
+<Badge variant="danger">Error</Badge>
+
+// Correct: Descriptive text in badge
+<Badge variant="warning">Pending Review</Badge>
+```
+
+### Don't
+
+```jsx
+// Incorrect: Ambiguous numeric badge without aria-label
+<Badge>5</Badge>
+
+// Incorrect: Relying on color alone for critical information
+<Badge variant="danger" />
+
+// Incorrect: Using badge for interactive content
+<Badge onClick={handleClick}>Click me</Badge>
+// Use a Button component instead for interactive elements
 ```

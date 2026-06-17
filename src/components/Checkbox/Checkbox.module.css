@@ -1,0 +1,164 @@
+/* =============================================================================
+   Checkbox — CSS Module
+   All values reference --ds- tokens from variables.css.
+   No hardcoded colours, spacing, or radii.
+   ============================================================================= */
+
+/* ---- Root wrapper --------------------------------------------------------- */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-4);
+}
+
+/* ---- <label> row ---------------------------------------------------------- */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-spacing-8);
+  cursor: pointer;
+  user-select: none;
+  color: var(--ds-color-surface-base-foreground);
+}
+
+/* ---- Wrapper that stacks the native input and the custom control ---------- */
+.controlWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---- Native <input type="checkbox"> — visually hidden but reachable ------- */
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+/* ---- Custom visual control ------------------------------------------------ */
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* Size tokens applied via size modifier classes */
+  width: var(--checkbox-control-size);
+  height: var(--checkbox-control-size);
+
+  background-color: var(--ds-color-surface-raised);
+  border: 2px solid var(--ds-color-neutral-400);
+  border-radius: var(--ds-border-radius-sm);
+
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+
+  color: var(--ds-color-primary-900-foreground); /* icon stroke colour when checked */
+}
+
+/* Checked / indeterminate — filled with primary-900 */
+.input:checked ~ .control,
+.input[aria-checked="mixed"] ~ .control {
+  background-color: var(--ds-color-primary-900);
+  border-color: var(--ds-color-primary-900);
+}
+
+/* Hover — light tint */
+.input:not(:disabled):not(:checked):hover ~ .control {
+  border-color: var(--ds-color-primary-700);
+  background-color: var(--ds-color-neutral-100);
+}
+
+/* Focus-visible ring */
+.input:focus-visible ~ .control {
+  outline: 2px solid var(--ds-color-primary-700);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--ds-color-primary-100);
+}
+
+/* ---- Check / dash icon ---------------------------------------------------- */
+.checkIcon {
+  width: var(--checkbox-icon-size);
+  height: var(--checkbox-icon-size);
+  pointer-events: none;
+
+  /* Hidden until checked/indeterminate */
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+.input:checked ~ .control .checkIcon,
+.input[aria-checked="mixed"] ~ .control .checkIcon {
+  opacity: 1;
+}
+
+/* ---- Label text ----------------------------------------------------------- */
+.labelText {
+  font-size: var(--checkbox-font-size);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-surface-base-foreground);
+}
+
+/* ---- Helper / error message ----------------------------------------------- */
+.helperText {
+  margin: 0;
+  /* Indent to align with label text (control size + gap) */
+  padding-left: calc(var(--checkbox-control-size) + var(--ds-spacing-8));
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-neutral-600);
+}
+
+/* ---- Error state ---------------------------------------------------------- */
+.error .control {
+  border-color: var(--ds-color-neutral-700);
+}
+
+.error .helperText {
+  color: var(--ds-color-neutral-800);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+/* ---- Disabled state ------------------------------------------------------- */
+.disabled .label {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ---- Size modifiers ------------------------------------------------------- */
+
+/* sm — 14 px control */
+.size-sm {
+  --checkbox-control-size: 14px;
+  --checkbox-icon-size:    9px;
+  --checkbox-font-size:    var(--ds-font-size-sm);
+}
+
+/* md — 18 px control (default) */
+.size-md {
+  --checkbox-control-size: 18px;
+  --checkbox-icon-size:    12px;
+  --checkbox-font-size:    var(--ds-font-size-base);
+}
+
+/* lg — 22 px control */
+.size-lg {
+  --checkbox-control-size: 22px;
+  --checkbox-icon-size:    14px;
+  --checkbox-font-size:    var(--ds-font-size-lg);
+}

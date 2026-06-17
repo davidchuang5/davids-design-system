@@ -1,2 +1,8 @@
-export { Dropdown, type DropdownProps, type DropdownItem } from './Dropdown'
-export { default } from './Dropdown'
+export { Dropdown, default } from './Dropdown'
+export type {
+  DropdownItem,
+  DropdownPlacement,
+  DropdownProps,
+  DropdownSize,
+  DropdownVariant,
+} from './types'

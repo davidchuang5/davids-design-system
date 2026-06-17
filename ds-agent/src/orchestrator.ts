@@ -58,17 +58,31 @@ export async function orchestrate(spec: DesignSystemSpec) {
     });
   }
 
+  // ── CLEAN: Remove prior generation artifacts ─────────────────
+  console.log('── Cleaning prior generation ──\n');
+
+  await Promise.all(
+    ['tokens.json', 'variables.css', 'tokens.js', 'tokens.d.ts'].map((f) =>
+      fs.rm(`${SRC_DIR}/tokens/${f}`, { force: true })
+    )
+  );
+
+  try {
+    const existing = await fs.readdir(`${SRC_DIR}/components`);
+    await Promise.all(
+      existing.map((c) => fs.rm(`${SRC_DIR}/components/${c}`, { recursive: true, force: true }))
+    );
+  } catch {
+    // components dir doesn't exist yet
+  }
+
+  await fs.writeFile(`${SRC_DIR}/index.ts`, `export * from './tokens';\n`);
+  console.log('  ✓ Cleared tokens, components, and index.ts\n');
+
   // ── PHASE 1: Tokens (isolated run for human review) ────────
   console.log('── Phase 1: Design Tokens ──\n');
 
-  const tokensExist = await Promise.all([
-    fs.access(`${SRC_DIR}/tokens/variables.css`).then(() => true).catch(() => false),
-    fs.access(`${SRC_DIR}/tokens/tokens.json`).then(() => true).catch(() => false),
-  ]).then(([a, b]) => a && b);
-
-  if (tokensExist) {
-    console.log(`  ✓ Tokens already exist at ${SRC_DIR}/tokens/ — skipping generation.\n`);
-  } else {
+  {
     for await (const message of query({
       prompt: `
         Generate design tokens for the following spec and write them to disk.

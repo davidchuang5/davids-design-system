@@ -1,202 +1,188 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { Badge } from './Badge'
 import React from 'react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Badge } from './Badge'
+import styles from './Badge.module.css'
+import type { BadgeVariant, BadgeSize } from './types'
 
-describe('Badge', () => {
-  describe('rendering', () => {
-    it('should render without crashing', () => {
-      render(<Badge>Badge Text</Badge>)
-      expect(screen.getByText('Badge Text')).toBeInTheDocument()
-    })
+// ---------------------------------------------------------------------------
+// 1. Renders without crashing
+// ---------------------------------------------------------------------------
+describe('Badge — rendering', () => {
+  it('renders children as visible text', () => {
+    render(<Badge>Active</Badge>)
+    expect(screen.getByText('Active')).toBeInTheDocument()
+  })
 
-    it('should render as a span element', () => {
-      const { container } = render(<Badge>Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element).toBeInTheDocument()
-    })
+  it('renders a <span> element', () => {
+    render(<Badge>span check</Badge>)
+    const el = screen.getByRole('status')
+    expect(el.tagName).toBe('SPAN')
+  })
 
-    it('should render children correctly', () => {
-      render(<Badge>Hello Badge</Badge>)
-      expect(screen.getByText('Hello Badge')).toBeInTheDocument()
-    })
+  it('renders with no children without throwing', () => {
+    render(<Badge />)
+    expect(screen.getByRole('status')).toBeInTheDocument()
+  })
+})
 
-    it('should render empty when no children provided', () => {
-      const { container } = render(<Badge />)
-      const element = container.querySelector('span')
-      expect(element).toBeInTheDocument()
-      expect(element?.textContent).toBe('')
+// ---------------------------------------------------------------------------
+// 2. Ref forwarding
+// ---------------------------------------------------------------------------
+describe('Badge — ref forwarding', () => {
+  it('forwards a ref to the underlying <span>', () => {
+    const ref = React.createRef<HTMLSpanElement>()
+    render(<Badge ref={ref}>Ref test</Badge>)
+    expect(ref.current).not.toBeNull()
+    expect(ref.current?.tagName).toBe('SPAN')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 3. ARIA attributes
+// ---------------------------------------------------------------------------
+describe('Badge — accessibility', () => {
+  it('has role="status" by default', () => {
+    render(<Badge>Status</Badge>)
+    expect(screen.getByRole('status')).toBeInTheDocument()
+  })
+
+  it('accepts a custom role override', () => {
+    render(<Badge role="img" aria-label="New">3</Badge>)
+    expect(screen.getByRole('img', { name: 'New' })).toBeInTheDocument()
+  })
+
+  it('accepts an aria-label prop', () => {
+    render(<Badge aria-label="3 new notifications">3</Badge>)
+    const el = screen.getByRole('status', { name: '3 new notifications' })
+    expect(el).toBeInTheDocument()
+  })
+
+  it('forwards aria-describedby to the DOM element', () => {
+    render(<Badge aria-describedby="desc">Badge</Badge>)
+    expect(screen.getByRole('status')).toHaveAttribute('aria-describedby', 'desc')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 4. Prop forwarding — ...rest reaches the DOM element
+// ---------------------------------------------------------------------------
+describe('Badge — prop forwarding', () => {
+  it('forwards data-testid', () => {
+    render(<Badge data-testid="my-badge">Label</Badge>)
+    expect(screen.getByTestId('my-badge')).toBeInTheDocument()
+  })
+
+  it('forwards onClick and fires the handler', async () => {
+    const handleClick = vi.fn()
+    const user = userEvent.setup()
+    render(<Badge onClick={handleClick}>Clickable</Badge>)
+    await user.click(screen.getByRole('status'))
+    expect(handleClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('merges a custom className with the generated class list', () => {
+    render(<Badge className="custom-class">Label</Badge>)
+    const el = screen.getByRole('status')
+    expect(el.className).toContain('custom-class')
+    // base class should also still be present
+    expect(el.className).toContain(styles.badge)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 5. CSS Module integrity — every key the component uses must exist in the
+//    imported styles object (guards against typos between .tsx and .module.css)
+// ---------------------------------------------------------------------------
+describe('Badge — CSS module integrity', () => {
+  it('styles.badge is defined', () => {
+    expect(styles.badge).toBeTruthy()
+  })
+
+  const variants: BadgeVariant[] = [
+    'default', 'primary', 'secondary', 'success', 'warning', 'danger', 'outline',
+  ]
+  variants.forEach((variant) => {
+    it(`styles["variant-${variant}"] is defined`, () => {
+      expect(styles[`variant-${variant}` as keyof typeof styles]).toBeTruthy()
     })
   })
 
-  describe('variant prop', () => {
-    it('should render with default variant by default', () => {
-      const { container } = render(<Badge>Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-default')
+  const sizes: BadgeSize[] = ['sm', 'md', 'lg']
+  sizes.forEach((size) => {
+    it(`styles["size-${size}"] is defined`, () => {
+      expect(styles[`size-${size}` as keyof typeof styles]).toBeTruthy()
     })
+  })
+})
 
-    it('should render with primary variant', () => {
-      const { container } = render(<Badge variant="primary">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-primary')
-    })
+// ---------------------------------------------------------------------------
+// 6. Variant class application
+// ---------------------------------------------------------------------------
+describe('Badge — variant class application', () => {
+  const variants: BadgeVariant[] = [
+    'default', 'primary', 'secondary', 'success', 'warning', 'danger', 'outline',
+  ]
 
-    it('should render with success variant', () => {
-      const { container } = render(<Badge variant="success">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-success')
-    })
-
-    it('should render with warning variant', () => {
-      const { container } = render(<Badge variant="warning">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-warning')
-    })
-
-    it('should render with danger variant', () => {
-      const { container } = render(<Badge variant="danger">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-danger')
+  variants.forEach((variant) => {
+    it(`applies the correct CSS class for variant="${variant}"`, () => {
+      render(<Badge variant={variant} data-testid={`badge-${variant}`}>{variant}</Badge>)
+      const el = screen.getByTestId(`badge-${variant}`)
+      expect(el.className).toContain(styles[`variant-${variant}` as keyof typeof styles])
     })
   })
 
-  describe('size prop', () => {
-    it('should render with md size by default', () => {
-      const { container } = render(<Badge>Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('size-md')
-    })
+  it('defaults to variant="default" when no variant prop is supplied', () => {
+    render(<Badge data-testid="badge-novariant">Label</Badge>)
+    const el = screen.getByTestId('badge-novariant')
+    expect(el.className).toContain(styles['variant-default'])
+  })
 
-    it('should render with sm size', () => {
-      const { container } = render(<Badge size="sm">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('size-sm')
-    })
+  it('does not apply a class for an omitted variant', () => {
+    render(<Badge data-testid="badge-check">Label</Badge>)
+    const el = screen.getByTestId('badge-check')
+    // No "variant-primary" class when we render with default variant
+    expect(el.className).not.toContain(styles['variant-primary'])
+  })
+})
 
-    it('should render with md size', () => {
-      const { container } = render(<Badge size="md">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('size-md')
-    })
+// ---------------------------------------------------------------------------
+// 7. Size class application
+// ---------------------------------------------------------------------------
+describe('Badge — size class application', () => {
+  const sizes: BadgeSize[] = ['sm', 'md', 'lg']
 
-    it('should render with lg size', () => {
-      const { container } = render(<Badge size="lg">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('size-lg')
+  sizes.forEach((size) => {
+    it(`applies the correct CSS class for size="${size}"`, () => {
+      render(<Badge size={size} data-testid={`badge-size-${size}`}>{size}</Badge>)
+      const el = screen.getByTestId(`badge-size-${size}`)
+      expect(el.className).toContain(styles[`size-${size}` as keyof typeof styles])
     })
   })
 
-  describe('className prop', () => {
-    it('should accept custom className', () => {
-      const { container } = render(<Badge className="custom-class">Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('custom-class')
-    })
-
-    it('should combine custom className with variant and size classes', () => {
-      const { container } = render(
-        <Badge variant="primary" size="lg" className="custom">
-          Test
-        </Badge>
-      )
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('variant-primary')
-      expect(element?.className).toContain('size-lg')
-      expect(element?.className).toContain('custom')
-    })
-
-    it('should apply badge base class', () => {
-      const { container } = render(<Badge>Test</Badge>)
-      const element = container.querySelector('span')
-      expect(element?.className).toContain('badge')
-    })
+  it('defaults to size="md" when no size prop is supplied', () => {
+    render(<Badge data-testid="badge-nosize">Label</Badge>)
+    const el = screen.getByTestId('badge-nosize')
+    expect(el.className).toContain(styles['size-md'])
   })
+})
 
-  describe('ref forwarding', () => {
-    it('should forward ref to span element', () => {
-      const ref = React.createRef<HTMLSpanElement>()
-      render(<Badge ref={ref}>Test</Badge>)
-      expect(ref.current).toBeInstanceOf(HTMLSpanElement)
-    })
-
-    it('should allow accessing span properties via ref', () => {
-      const ref = React.createRef<HTMLSpanElement>()
-      render(<Badge ref={ref}>Test Badge</Badge>)
-      expect(ref.current?.textContent).toBe('Test Badge')
-    })
-
-    it('should allow accessing span methods via ref', () => {
-      const ref = React.createRef<HTMLSpanElement>()
-      render(<Badge ref={ref}>Test</Badge>)
-      expect(typeof ref.current?.addEventListener).toBe('function')
-    })
+// ---------------------------------------------------------------------------
+// 8. Base class is always applied regardless of variant / size
+// ---------------------------------------------------------------------------
+describe('Badge — base class invariant', () => {
+  it('always carries the base styles.badge class', () => {
+    render(<Badge variant="danger" size="lg" data-testid="base-check">!</Badge>)
+    expect(screen.getByTestId('base-check').className).toContain(styles.badge)
   })
+})
 
-  describe('HTML attributes', () => {
-    it('should accept and apply HTML attributes', () => {
-      const { container } = render(
-        <Badge data-testid="custom-badge" title="Badge Title">
-          Test
-        </Badge>
-      )
-      const element = container.querySelector('span')
-      expect(element?.getAttribute('data-testid')).toBe('custom-badge')
-      expect(element?.getAttribute('title')).toBe('Badge Title')
-    })
-
-    it('should accept aria attributes', () => {
-      const { container } = render(
-        <Badge aria-label="Important" role="status">
-          Test
-        </Badge>
-      )
-      const element = container.querySelector('span')
-      expect(element?.getAttribute('aria-label')).toBe('Important')
-      expect(element?.getAttribute('role')).toBe('status')
-    })
-
-    it('should accept data attributes', () => {
-      const { container } = render(
-        <Badge data-variant="custom" data-index="1">
-          Test
-        </Badge>
-      )
-      const element = container.querySelector('span')
-      expect(element?.getAttribute('data-variant')).toBe('custom')
-      expect(element?.getAttribute('data-index')).toBe('1')
-    })
-  })
-
-  describe('combination tests', () => {
-    it('should render all variant and size combinations', () => {
-      const variants: Array<'default' | 'primary' | 'success' | 'warning' | 'danger'> = [
-        'default',
-        'primary',
-        'success',
-        'warning',
-        'danger',
-      ]
-      const sizes: Array<'sm' | 'md' | 'lg'> = ['sm', 'md', 'lg']
-
-      variants.forEach((variant) => {
-        sizes.forEach((size) => {
-          const { container } = render(
-            <Badge variant={variant} size={size}>
-              Test
-            </Badge>
-          )
-          const element = container.querySelector('span')
-          expect(element?.className).toContain(`variant-${variant}`)
-          expect(element?.className).toContain(`size-${size}`)
-        })
-      })
-    })
-  })
-
-  describe('displayName', () => {
-    it('should have correct displayName', () => {
-      expect(Badge.displayName).toBe('Badge')
-    })
+// ---------------------------------------------------------------------------
+// 9. displayName
+// ---------------------------------------------------------------------------
+describe('Badge — displayName', () => {
+  it('has displayName "Badge"', () => {
+    expect(Badge.displayName).toBe('Badge')
   })
 })

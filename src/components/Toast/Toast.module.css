@@ -1,0 +1,251 @@
+/* =============================================================================
+   Toast — CSS Module
+   All values reference puma-ui design tokens from variables.css.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Container — fixed viewport anchor for stacking toasts
+--------------------------------------------------------------------------- */
+.container {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-8);
+  max-width: 420px;
+  width: max-content;
+  pointer-events: none; /* individual toasts re-enable pointer events */
+}
+
+/* Position variants */
+.container[data-position='top-left'] {
+  top: var(--ds-spacing-24);
+  left: var(--ds-spacing-24);
+  align-items: flex-start;
+}
+.container[data-position='top-center'] {
+  top: var(--ds-spacing-24);
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.container[data-position='top-right'] {
+  top: var(--ds-spacing-24);
+  right: var(--ds-spacing-24);
+  align-items: flex-end;
+}
+.container[data-position='bottom-left'] {
+  bottom: var(--ds-spacing-24);
+  left: var(--ds-spacing-24);
+  align-items: flex-start;
+  flex-direction: column-reverse;
+}
+.container[data-position='bottom-center'] {
+  bottom: var(--ds-spacing-24);
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  flex-direction: column-reverse;
+}
+.container[data-position='bottom-right'] {
+  bottom: var(--ds-spacing-24);
+  right: var(--ds-spacing-24);
+  align-items: flex-end;
+  flex-direction: column-reverse;
+}
+
+/* ---------------------------------------------------------------------------
+   Toast root
+--------------------------------------------------------------------------- */
+.toast {
+  pointer-events: all;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-spacing-12);
+  border-radius: var(--ds-border-radius-lg);
+  border-left-width: 4px;
+  border-left-style: solid;
+  background-color: var(--ds-color-surface-raised);
+  color: var(--ds-color-surface-raised-foreground);
+  box-shadow:
+    0 4px 12px rgba(16, 15, 13, 0.10),
+    0 1px 3px  rgba(16, 15, 13, 0.06);
+
+  /* entry animation */
+  animation: toastSlideIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast[data-closing='true'] {
+  animation: toastSlideOut 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* ---------------------------------------------------------------------------
+   Size variants
+--------------------------------------------------------------------------- */
+.toast[data-size='sm'] {
+  padding: var(--ds-spacing-8) var(--ds-spacing-12);
+  min-width: 240px;
+}
+.toast[data-size='md'] {
+  padding: var(--ds-spacing-12) var(--ds-spacing-16);
+  min-width: 300px;
+}
+.toast[data-size='lg'] {
+  padding: var(--ds-spacing-16) var(--ds-spacing-24);
+  min-width: 360px;
+}
+
+/* ---------------------------------------------------------------------------
+   Variant — border accent + icon color
+--------------------------------------------------------------------------- */
+
+/* info — primary warm-black accent */
+.toast[data-variant='info'] {
+  border-left-color: var(--ds-color-primary-800);
+}
+.toast[data-variant='info'] .icon {
+  color: var(--ds-color-primary-800);
+}
+
+/* success — warm green-adjacent using primary-700 (darkest warm neutral) */
+.toast[data-variant='success'] {
+  border-left-color: #3d6b4f; /* semantic success; no ds-color-success token yet */
+}
+.toast[data-variant='success'] .icon {
+  color: #3d6b4f;
+}
+
+/* warning — amber */
+.toast[data-variant='warning'] {
+  border-left-color: #b07d2a;
+}
+.toast[data-variant='warning'] .icon {
+  color: #b07d2a;
+}
+
+/* error — red */
+.toast[data-variant='error'] {
+  border-left-color: #b83232;
+}
+.toast[data-variant='error'] .icon {
+  color: #b83232;
+}
+
+/* ---------------------------------------------------------------------------
+   Inner layout
+--------------------------------------------------------------------------- */
+.icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px; /* optical alignment with first line of text */
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-4);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-tight);
+  color: var(--ds-color-neutral-900);
+  margin: 0;
+}
+
+.message {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-neutral-700);
+  margin: 0;
+}
+
+.description {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-neutral-500);
+  margin: 0;
+}
+
+/* Size-specific typography scaling */
+.toast[data-size='lg'] .title {
+  font-size: var(--ds-font-size-base);
+}
+.toast[data-size='lg'] .message {
+  font-size: var(--ds-font-size-base);
+}
+.toast[data-size='lg'] .description {
+  font-size: var(--ds-font-size-sm);
+}
+
+.toast[data-size='sm'] .title {
+  font-size: var(--ds-font-size-xs);
+}
+.toast[data-size='sm'] .message {
+  font-size: var(--ds-font-size-xs);
+}
+
+/* ---------------------------------------------------------------------------
+   Close button
+--------------------------------------------------------------------------- */
+.closeButton {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ds-border-radius-sm);
+  background: transparent;
+  color: var(--ds-color-neutral-400);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+  margin-top: -1px;
+}
+
+.closeButton:hover {
+  background-color: var(--ds-color-neutral-100);
+  color: var(--ds-color-neutral-800);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--ds-color-primary-800);
+  outline-offset: 1px;
+}
+
+.closeButton:active {
+  background-color: var(--ds-color-neutral-200);
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframes
+--------------------------------------------------------------------------- */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
