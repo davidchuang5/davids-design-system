@@ -22,10 +22,6 @@ export interface TestOutput {
   testCode: string
 }
 
-export interface DocsOutput {
-  mdx: string
-}
-
 export interface RunLogEntry {
   timestamp: string
   agent: string
