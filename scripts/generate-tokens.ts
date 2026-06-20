@@ -1,24 +1,19 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-// Top-level keys and the prefix they contribute to the export name.
-// null means the key itself is dropped and children are promoted.
 const TOP_LEVEL_PREFIX: Record<string, string | null> = {
   colors: 'Color',
   spacing: 'Spacing',
-  typography: null,   // e.g. fontFamily.sans → FontFamilySans
+  typography: null,
   borderRadius: 'BorderRadius',
   borderWidth: 'BorderWidth',
   shadow: 'Shadow',
   opacity: 'Opacity',
   zIndex: 'ZIndex',
-  transition: null,   // e.g. duration.fast → DurationFast
+  transition: null,
 };
 
-// Path segments that are structural (not semantic) — skip them in the name.
 const SKIP_IN_PATH = new Set(['scale']);
-
-// Keys that carry metadata, not token values.
 const SKIP_KEYS = new Set(['description', 'px', '$schema', '$meta']);
 
 interface TokenExport {
@@ -28,7 +23,7 @@ interface TokenExport {
 }
 
 function capitalize(s: string): string {
-  if (!s || /^\d/.test(s)) return s; // numeric segments stay as-is
+  if (!s || /^\d/.test(s)) return s;
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
@@ -54,7 +49,7 @@ function walk(obj: unknown, segments: string[], out: TokenExport[]): void {
   }
 }
 
-export async function generateTokenFiles(tokensJsonPath: string, outputDir: string): Promise<void> {
+async function generateTokenFiles(tokensJsonPath: string, outputDir: string): Promise<void> {
   const raw = await fs.readFile(tokensJsonPath, 'utf-8');
   const json = JSON.parse(raw) as Record<string, unknown>;
   const timestamp = new Date().toUTCString();
@@ -67,7 +62,6 @@ export async function generateTokenFiles(tokensJsonPath: string, outputDir: stri
     const prefix = TOP_LEVEL_PREFIX[topKey];
 
     if (prefix === null) {
-      // Transparent: promote children directly with their own key as the prefix.
       if (typeof topVal !== 'object' || topVal === null) continue;
       for (const [childKey, childVal] of Object.entries(topVal as Record<string, unknown>)) {
         if (SKIP_KEYS.has(childKey)) continue;
@@ -92,3 +86,14 @@ export async function generateTokenFiles(tokensJsonPath: string, outputDir: stri
 
   console.log(`  ✓ tokens.js + tokens.d.ts generated (${exports.length} exports)`);
 }
+
+// CLI entry point: npx tsx scripts/generate-tokens.ts <tokens.json> <outputDir>
+const [tokensJsonPath, outputDir] = process.argv.slice(2);
+if (!tokensJsonPath || !outputDir) {
+  console.error('Usage: npx tsx scripts/generate-tokens.ts <tokens.json path> <output dir>');
+  process.exit(1);
+}
+generateTokenFiles(tokensJsonPath, outputDir).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
